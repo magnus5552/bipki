@@ -1,14 +1,9 @@
-﻿namespace Bipki.Database.Models;
+namespace Bipki.App.Features.Auth;
 
-public class User
+public class UserAuthRequest
 {
-    public Guid Id { get; set; }
-
     public string Name { get; set; } = null!;
-
     public string Surname { get; set; } = null!;
-
     public string Telegram { get; set; } = null!;
-
-    public Guid ConferenceId { get; set; }
-}
+    public string Password { get; set; } = null!;
+} 

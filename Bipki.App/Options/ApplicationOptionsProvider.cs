@@ -1,4 +1,6 @@
-﻿namespace Bipki.App.Options;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Bipki.App.Options;
 
 public static class ApplicationOptionsProvider
 {
@@ -7,7 +9,12 @@ public static class ApplicationOptionsProvider
         var path = AppDomain.CurrentDomain.BaseDirectory;
         var configurationBuilder = new ConfigurationBuilder().SetBasePath(path);
         configurationBuilder.AddEnvironmentVariables();
-        configurationBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+        
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+        configurationBuilder.AddJsonFile(
+            environment == "Development" ? "appsettings.Development.json" : "appsettings.json", optional: false,
+            reloadOnChange: true);
+
         return configurationBuilder.Build();
     }
 }

@@ -1,4 +1,4 @@
-﻿using Bipki.Database.Models;
+using Bipki.Database.Models;
 
 namespace Bipki.Database.Mappers;
 

@@ -17,11 +17,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<ApplicationOptions>(ApplicationOptionsProvider.GetConfiguration());
-builder.Services.AddDatabaseServices(
-    builder.Configuration.Get<ApplicationOptions>()!.DatabaseOptions.DbConnectionString);
-builder.Services.Configure<AuthorizationOptions>(builder.Configuration.GetSection("Authorization"));
 
+builder.Services.AddAllOptions();
+
+var appOptions = ApplicationOptionsProvider.GetConfiguration().Get<ApplicationOptions>();
+builder.Services.AddDatabaseServices(appOptions!.DatabaseOptions.DbConnectionString);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -32,6 +32,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
     });
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
