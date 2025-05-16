@@ -2,5 +2,5 @@
 
 public class ApplicationOptions
 {
-    
+     public DatabaseOptions DatabaseOptions { get; set; } = null!;
 }
