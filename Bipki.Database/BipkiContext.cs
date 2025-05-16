@@ -122,7 +122,7 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
             entity.Property(e => e.Deleted)
                 .HasDefaultValue(false)
-                .HasDefaultValue("deleted");
+                .HasColumnName("deleted");
         });
 
         builder.Entity<ActivityRegistration>(entity =>
