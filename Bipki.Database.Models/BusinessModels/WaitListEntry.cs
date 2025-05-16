@@ -3,7 +3,7 @@ using Bipki.Database.Models.UserModels;
 
 namespace Bipki.Database.Models.BusinessModels;
 
-public class WaitList : Entity
+public class WaitListEntry : Entity
 {
     public Guid ActivityId { get; set; }
     public Guid UserId { get; set; }
