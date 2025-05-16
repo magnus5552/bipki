@@ -4,5 +4,6 @@ namespace Bipki.Database.Models.BusinessModels;
 
 public class Location : Entity
 {
-    // TOOD
+    // TODO
+    public virtual IEnumerable<Conference> Conferences { get; set; } = null!;
 }

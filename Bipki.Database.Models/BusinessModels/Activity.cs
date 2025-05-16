@@ -16,4 +16,8 @@ public class Activity : Entity
     
     // TODO communication channel
     public string Recording { get; set; } = null!;
+    
+    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; }
+    
+    public virtual IEnumerable<WaitListEntry> WaitList { get; set; }
 }
