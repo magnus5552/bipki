@@ -1,5 +1,7 @@
 using Bipki.App.Options;
+using Bipki.Database;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +10,16 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<ApplicationOptions>(ApplicationOptionsProvider.GetConfiguration());
+builder.Services.AddDatabaseServices(
+    builder.Configuration.Get<ApplicationOptions>()!.DatabaseOptions.DbConnectionString);
 builder.Services.Configure<AuthorizationOptions>(builder.Configuration.GetSection("Authorization"));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -45,7 +49,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors(); 
+app.UseCors();
 app.UsePathBase("/api");
 app.UseRouting();
 app.UseAuthentication();

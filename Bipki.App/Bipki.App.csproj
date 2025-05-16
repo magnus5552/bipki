@@ -33,6 +33,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Bipki.Database.Models\Bipki.Database.Models.csproj" />
+      <ProjectReference Include="..\Bipki.Database\Bipki.Database.csproj" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
