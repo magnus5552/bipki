@@ -23,7 +23,7 @@
       - postgres_data:/var/lib/postgresql/data
     user: postgres:postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d python_exam_dev "]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bipki"]
       interval: 10s
       timeout: 5s
       retries: 5
