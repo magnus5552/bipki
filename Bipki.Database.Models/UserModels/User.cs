@@ -5,7 +5,15 @@ namespace Bipki.Database.Models.UserModels;
 
 public class User: IdentityUser<Guid>
 {
-    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; }
+    public string Name { get; set; } = null!;
+
+    public string Surname { get; set; } = null!;
+
+    public string Telegram { get; set; } = null!;
+
+    public Guid ConferenceId { get; set; }
     
-    public virtual IEnumerable<WaitListEntry> WaitLists { get; set; }
+    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
+
+    public virtual IEnumerable<WaitListEntry> WaitLists { get; set; } = null!;
 }
