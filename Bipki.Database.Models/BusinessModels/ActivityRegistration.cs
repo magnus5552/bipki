@@ -13,6 +13,8 @@ public class ActivityRegistration : Entity
     
     public bool Verified { get; set; }
     
+    public bool NotificationEnabled { get; set; }
+    
     public virtual Activity Activity { get; set; } = null!;
     
     public virtual User User { get; set; } = null!;

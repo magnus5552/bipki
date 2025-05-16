@@ -14,6 +14,8 @@ public class Activity : Entity
     
     public ActivityType Type { get; set; }
     
+    public int TotalParticipants { get; set; }
+    
     // TODO communication channel
     public string Recording { get; set; } = null!;
     

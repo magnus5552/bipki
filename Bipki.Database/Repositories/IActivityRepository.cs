@@ -5,4 +5,5 @@ namespace Bipki.Database.Repositories;
 public interface IActivityRepository
 {
     Activity? GetById(Guid id);
+    UserActivity? GetUserActivity(Guid userId, Guid activityId);
 }
