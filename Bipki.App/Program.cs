@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<ApplicationOptions>(AppOptionsProvider.GetConfiguration());
+builder.Services.Configure<ApplicationOptions>(ApplicationOptionsProvider.GetConfiguration());
 
 var app = builder.Build();
 
