@@ -7,17 +7,23 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
+
 # Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y \
-        nodejs \
+RUN apt-get update \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 
-COPY **/*.csproj ./
-RUN for file in $(find . -name "*.csproj"); do mkdir -p $(dirname $file); done
-RUN for file in $(find . -name "*.csproj"); do mv $file $(dirname $file)/; done
+COPY *.sln ./
+COPY */*.*proj ./
+
+RUN dotnet sln list | \
+      tail -n +3 | \
+      xargs -I {} sh -c \
+        'target="{}"; dir="${target%/*}"; file="${target##*/}"; mkdir -p -- "$dir"; mv -- "$file" "$target"'
+
 
 RUN dotnet restore "Bipki.App/Bipki.App.csproj"
 COPY . .
