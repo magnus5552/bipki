@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter } from "./router";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import "./custom.css";
 
 interface AppProps {
@@ -10,12 +11,48 @@ interface AppProps {
 
 const queryClient = new QueryClient();
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#2D2D2D',
+      paper: '#2D2D2D',
+    },
+    text: {
+      primary: '#A980E0',
+      secondary: '#A980E0',
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#2D2D2D',
+          color: '#A980E0',
+        },
+      },
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
+});
+
 export default function App({ basename }: AppProps) {
   const router = useMemo(() => createRouter(basename), [basename]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

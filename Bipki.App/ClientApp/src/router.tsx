@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/protectedRoute/ProtectedRoute";
 import { Role } from "./types/User";
 import { Login } from "./components/pages/login/Login";
+import { GuestNavMenu } from 'components/navigation/GuestNavMenu/GuestNavMenu';
 export const createRouter = (basename: string) =>
   createBrowserRouter(
     [
@@ -28,16 +29,19 @@ export const createRouter = (basename: string) =>
         ],
       },
       {
-        path: "/user",
-        element: <ProtectedRoute requiredRole={Role.User} />,
+        element: /*<ProtectedRoute requiredRole={Role.User} /> */ <GuestNavMenu />,
         children: [
           {
-            index: true,
+            path: "/conference",
             element: <div>User Dashboard</div>,
           },
           {
-            path: "profile",
-            element: <div>User Profile</div>,
+            path: "/plan",
+            element: <div>User Plan</div>,
+          },
+          {
+            path: "/map",
+            element: <div>User Map</div>,
           },
         ],
       },
