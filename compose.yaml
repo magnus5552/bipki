@@ -1,0 +1,40 @@
+﻿services:
+  bipki.app:
+    image: bipki.app
+    build:
+      context: .
+      dockerfile: Bipki.App/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=bipki;Username=postgres;Password=postgres
+    networks:
+      - bipki-network
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=bipki
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    user: postgres:postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d python_exam_dev "]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - bipki-network
+
+volumes:
+  postgres_data:
+
+networks:
+  bipki-network:
+    driver: bridge
