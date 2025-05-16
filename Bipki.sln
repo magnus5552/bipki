@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bipki.App", "Bipki.App\Bipki.App.csproj", "{46C04FAD-C62E-40EA-A208-DF20AEA1A03E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bipki.Database.Models", "Bipki.Database.Models\Bipki.Database.Models.csproj", "{6FC6F88C-60F1-4B0B-AC45-0E15372EB9DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bipki.Database", "Bipki.Database\Bipki.Database.csproj", "{8BC9FF17-E178-48DB-A2A0-F55F7E94C5F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{46C04FAD-C62E-40EA-A208-DF20AEA1A03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46C04FAD-C62E-40EA-A208-DF20AEA1A03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46C04FAD-C62E-40EA-A208-DF20AEA1A03E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FC6F88C-60F1-4B0B-AC45-0E15372EB9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FC6F88C-60F1-4B0B-AC45-0E15372EB9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FC6F88C-60F1-4B0B-AC45-0E15372EB9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FC6F88C-60F1-4B0B-AC45-0E15372EB9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC9FF17-E178-48DB-A2A0-F55F7E94C5F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC9FF17-E178-48DB-A2A0-F55F7E94C5F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC9FF17-E178-48DB-A2A0-F55F7E94C5F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC9FF17-E178-48DB-A2A0-F55F7E94C5F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
