@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Role } from '../../../types/User';
 import { Loader } from '../../common/Loader/Loader';
 import { getUser } from 'api/authApi';
+import { Header } from '../../common/Header/Header';
+import { Box } from '@mui/material';
 
 interface ProtectedRouteProps {
     requiredRole: Role;
@@ -23,5 +25,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole }) 
         return <Navigate to="/login" replace />;
     }
 
-    return <Outlet />;
+    return (
+        <Box>
+            <Header />
+            <Outlet />
+        </Box>
+    );
 };
