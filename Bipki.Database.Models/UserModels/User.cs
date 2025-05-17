@@ -13,6 +13,8 @@ public class User: IdentityUser<Guid>
 
     public Guid? ConferenceId { get; set; }
     
+    public bool CheckedIn { get; set; }
+    
     public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
 
     public virtual IEnumerable<WaitListEntry> WaitLists { get; set; } = null!;

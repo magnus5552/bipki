@@ -25,4 +25,17 @@ public class UserRepository: IUserRepository
             x.ConferenceId == conferenceId);
         return user;
     }
+
+    public bool TrySetCheckedIn(Guid userId)
+    {
+        var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+        if (user is null)
+            return false;
+        if (user.CheckedIn)
+            return false;
+        user.CheckedIn = true;
+        dbContext.SaveChanges();
+
+        return true;
+    }
 }

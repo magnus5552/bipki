@@ -14,10 +14,12 @@ namespace Bipki.App.Features.Admin;
 public class AdminController : ControllerBase
 {
     private readonly IConferenceRepository conferenceRepository;
+    private readonly IUserRepository userRepository;
 
-    public AdminController(IConferenceRepository conferenceRepository)
+    public AdminController(IConferenceRepository conferenceRepository, IUserRepository userRepository)
     {
         this.conferenceRepository = conferenceRepository;
+        this.userRepository = userRepository;
     }
 
     [Authorize(Roles = Roles.User)]
@@ -38,7 +40,7 @@ public class AdminController : ControllerBase
     [HttpPut("conferences")]
     public async Task<IActionResult> CreateConference([FromBody] CreateConferenceRequest createRequest)
     {
-        var conference = new Conference
+        var conference = new Database.Models.Conference
         {
             Id = Guid.NewGuid(),
             Plan = "",
@@ -74,5 +76,12 @@ public class AdminController : ControllerBase
         await conferenceRepository.ChangeConference(conference);
 
         return NoContent();
+    }
+
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPatch("checkInGuest/{userId:guid}")]
+    public async Task<IActionResult> CheckInGuest([FromRoute] Guid userId)
+    {
+        return userRepository.TrySetCheckedIn(userId) ? NoContent() : BadRequest();
     }
 }
