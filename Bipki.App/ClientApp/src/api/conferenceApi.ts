@@ -10,5 +10,6 @@ export const getConference = async (): Promise<Conference> => {
     endDate: new Date("2024-05-21T18:00:00"),
     address: "г. Екатеринбург, ул. Балбесная 32",
     registrationStatus: RegistrationStatus.Registered,
+    description: "Описание мероприятия",
   };
 };

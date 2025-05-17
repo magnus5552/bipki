@@ -1,11 +1,13 @@
-import { Box, Typography, Button, styled } from "@mui/material";
+import { Box, Button, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   Activity,
   ActivityType,
   RegistrationStatus,
 } from "../../../types/Activity";
-import { TypeLabel, Title, Time, SeatsInfo } from "./ActivityCard";
+import { Title, Time, StatusChip } from "./ActivityCard";
+import { ActivityStatus } from "../ActivityStatus/ActivityStatus";
+import { ActivityTitle } from './ActivityTitle';
 
 const CardContainer = styled(Box)({
   width: "311px",
@@ -15,22 +17,6 @@ const CardContainer = styled(Box)({
   borderRadius: "4px",
   border: "1px solid #A980E0",
 });
-
-const StatusLabel = styled(Typography)<{ isActive?: boolean }>(
-  ({ isActive }) => ({
-    fontSize: "10px",
-    lineHeight: "16px",
-    letterSpacing: "0.4px",
-    color: isActive ? "#2D2D2D" : "#A980E0",
-    backgroundColor: isActive ? "#A980E0" : "transparent",
-    border: "1px solid #A980E0",
-    borderRadius: "10px",
-    padding: "0 8px",
-    height: "15.59px",
-    display: "inline-flex",
-    alignItems: "center",
-  })
-);
 
 interface CollapsedActivityCardProps {
   activity: Activity;
@@ -44,7 +30,7 @@ export const CollapsedActivityCard = ({
   const navigate = useNavigate();
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button')) {
+    if ((e.target as HTMLElement).closest("button")) {
       return;
     }
     navigate(`/activity/${activity.id}`);
@@ -61,21 +47,22 @@ export const CollapsedActivityCard = ({
     if (activity.type === ActivityType.Workshop) {
       switch (activity.registrationStatus) {
         case RegistrationStatus.Registered:
-          return { text: "Вы записаны", isActive: true };
+          return { text: "Вы записаны", isActive: true, isImportant: false };
         case RegistrationStatus.WaitingList:
-          return { text: "Вы в очереди", isActive: true };
+          return { text: "Вы в очереди", isActive: true, isImportant: true };
         case RegistrationStatus.PendingConfirmation:
           return {
             text:
               "Ожидает подтверждения до " +
               formatTime(activity.confirmationDeadline!),
             isActive: true,
+            isImportant: true,
           };
         default:
-          return { text: "", isActive: false };
+          return { text: "", isActive: false, isImportant: false };
       }
     }
-    return { text: "", isActive: false };
+    return { text: "", isActive: false, isImportant: false };
   };
 
   const status = getStatusLabel();
@@ -86,44 +73,15 @@ export const CollapsedActivityCard = ({
         activity.registrationStatus ===
           RegistrationStatus.PendingConfirmation &&
         status.text && (
-          <StatusLabel isActive width="100%" marginBottom="4px">{status.text}</StatusLabel>
+          <StatusChip
+            color="primary"
+            variant="filled"
+            size="small"
+            label={status.text}
+            sx={{ width: "100%", backgroundColor: "#CEAAFF" }}
+          />
         )}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <TypeLabel>
-            {activity.type === ActivityType.Workshop ? "Мастер-класс" : "Лекция"}
-          </TypeLabel>
-          {activity.type === ActivityType.Workshop &&
-            activity.registrationStatus !==
-              RegistrationStatus.PendingConfirmation &&
-            status.text && (
-              <StatusLabel isActive={status.isActive}>{status.text}</StatusLabel>
-            )}
-        </Box>
-        {activity.type === ActivityType.Workshop && (
-          <SeatsInfo isFull={activity.occupiedSeats === activity.totalSeats}>
-            {`${activity.occupiedSeats}/${activity.totalSeats}`}
-          </SeatsInfo>
-        )}
-      </Box>
-      <Title sx={{ marginBottom: "8px" }}>{activity.title}</Title>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Time>{`${formatTime(activity.startDateTime)} - ${formatTime(
-          activity.endDateTime
-        )}`}</Time>
-        {activity.type === ActivityType.Workshop &&
-          activity.registrationStatus ===
-            RegistrationStatus.PendingConfirmation &&
-          onAction && (
-            <Button 
-              onClick={() => onAction(activity)} 
-              variant="contained"
-              sx={{ height: "16px", fontSize: "10px"}}
-            >
-              Подтвердить запись
-            </Button>
-          )}
-      </Box>
+      <ActivityTitle activity={activity} onAction={() => onAction?.(activity)} />
     </CardContainer>
   );
 };

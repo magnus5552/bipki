@@ -6,13 +6,17 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import Favorite from "@mui/icons-material/Favorite";
+import Info from "@mui/icons-material/Info";
+import Assignment from "@mui/icons-material/Assignment";
+import Star from "@mui/icons-material/Star";
+import Map from "@mui/icons-material/Map";
 import { ConferenceHeader } from "../../conference/ConferenceHeader/ConferenceHeader";
 
 export const GuestNavMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isActivityPage = location.pathname.startsWith("/activity/");
+  const isActivityPage = location.pathname.startsWith("/activity");
 
   return (
     <Box
@@ -34,13 +38,10 @@ export const GuestNavMenu = () => {
         elevation={3}
       >
         <BottomNavigation
-          value={isActivityPage ? "/activity/1" : location.pathname}
+          value={isActivityPage ? "/activity" : location.pathname}
           onChange={(_, newValue) => {
-            if (newValue !== "/activity/1") {
-              navigate(newValue);
-            }
+            navigate(newValue);
           }}
-          showLabels
           sx={{
             backgroundColor: "#2D2D2D",
             "& .MuiBottomNavigationAction-root": {
@@ -51,22 +52,10 @@ export const GuestNavMenu = () => {
             },
           }}
         >
-          <BottomNavigationAction
-            label="О мероприятии"
-            value="/activity/1"
-            icon={<Favorite />}
-            disabled
-          />
-          <BottomNavigationAction
-            label="Программа"
-            value="/plan"
-            icon={<Favorite />}
-          />
-          <BottomNavigationAction
-            label="Карта"
-            value="/map"
-            icon={<Favorite />}
-          />
+          <BottomNavigationAction value="/activity" icon={<Info />} />
+          <BottomNavigationAction value="/plan" icon={<Assignment />} />
+          <BottomNavigationAction value="/registered" icon={<Star />} />
+          <BottomNavigationAction value="/map" icon={<Map />} />
         </BottomNavigation>
       </Paper>
     </Box>

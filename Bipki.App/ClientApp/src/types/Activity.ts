@@ -17,11 +17,12 @@ export interface BaseActivity {
   endDateTime: Date;
   description: string;
   type: ActivityType;
+  typeLabel: string;
+  registrationStatus: RegistrationStatus;
 }
 
 export interface WorkshopActivity extends BaseActivity {
   type: ActivityType.Workshop;
-  registrationStatus: RegistrationStatus;
   totalSeats: number;
   occupiedSeats: number;
   confirmationDeadline?: Date; // Только если status === PendingConfirmation

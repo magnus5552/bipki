@@ -66,6 +66,7 @@ export const ConferenceHeader = () => {
         <Button
           variant="contained"
           fullWidth
+          sx={{ color: '#FFFFFF' }}
         >
           Записаться на мероприятие
         </Button>

@@ -1,5 +1,17 @@
-import { Box, Typography, Button, styled } from "@mui/material";
-import { Activity, ActivityType } from "../../../types/Activity";
+import {
+  Box,
+  Typography,
+  Button,
+  styled,
+  Chip,
+} from "@mui/material";
+import {
+  Activity,
+  ActivityType,
+} from "../../../types/Activity";
+
+
+import { ActivityTitle } from './ActivityTitle';
 
 const CardContainer = styled(Box)({
   height: "323.28px",
@@ -27,8 +39,9 @@ export const Title = styled(Typography)({
   fontSize: "14px",
   lineHeight: "20px",
   letterSpacing: "0.25px",
-  color: "#A980E0",
-  marginBottom: "4px",
+  color: "#CFCFCF",
+  marginBottom: "8px",
+  fontWeight: "bold",
 });
 
 export const Time = styled(Typography)({
@@ -48,19 +61,27 @@ export const Description = styled(Typography)({
   overflow: "hidden",
 });
 
-export const SeatsInfo = styled(Typography)<{ isFull: boolean }>(({ isFull }) => ({
+export const SeatsInfo = styled(Typography)<{ isFull: boolean }>(
+  ({ isFull }) => ({
+    fontSize: "10px",
+    lineHeight: "16px",
+    letterSpacing: "0.4px",
+    color: isFull ? "#2D2D2D" : "#A980E0",
+    backgroundColor: isFull ? "#A980E0" : "transparent",
+    border: "1px solid #A980E0",
+    borderRadius: "10px",
+    padding: "0 8px",
+    height: "15.59px",
+    display: "inline-flex",
+    alignItems: "center",
+  })
+);
+
+export const StatusChip = styled(Chip)({
+  marginBottom: "8px",
+  height: "16px",
   fontSize: "10px",
-  lineHeight: "16px",
-  letterSpacing: "0.4px",
-  color: isFull ? "#2D2D2D" : "#A980E0",
-  backgroundColor: isFull ? "#A980E0" : "transparent",
-  border: "1px solid #A980E0",
-  borderRadius: "10px",
-  padding: "0 8px",
-  height: "15.59px",
-  display: "inline-flex",
-  alignItems: "center",
-}));
+});
 
 interface ActivityCardProps {
   activity: Activity;
@@ -68,53 +89,22 @@ interface ActivityCardProps {
 }
 
 export const ActivityCard = ({ activity, onAction }: ActivityCardProps) => {
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("ru-RU", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getActionButtonText = () => {
-    if (activity.type === "workshop") {
-      switch (activity.registrationStatus) {
-        case "not_registered":
-          return "Записаться";
-        case "registered":
-          return "Отменить";
-        case "waiting_list":
-          return "В листе ожидания";
-        case "pending_confirmation":
-          return "Подтвердить запись";
-      }
-    }
-    return null;
-  };
+  function openChat(id: string): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <CardContainer>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <TypeLabel>
-          {activity.type === ActivityType.Workshop ? "Мастер-класс" : "Лекция"}
-        </TypeLabel>
-        {activity.type === ActivityType.Workshop && (
-          <SeatsInfo isFull={activity.occupiedSeats === activity.totalSeats}>
-            {`${activity.occupiedSeats}/${activity.totalSeats}`}
-          </SeatsInfo>
-        )}
-      </Box>
-      <Title>{activity.title}</Title>
-      <Time sx={{ marginBottom: "20px" }}>{`${formatTime(activity.startDateTime)} - ${formatTime(
-        activity.endDateTime
-      )}`}</Time>
+      <ActivityTitle activity={activity} onAction={onAction} marginBottom="16px" />
       <Description>{activity.description}</Description>
       {activity.type === ActivityType.Workshop && (
         <Button
-          onClick={() => onAction(activity)}
+          onClick={() => openChat(activity.id)}
           variant="contained"
           fullWidth
+          color="info"
         >
-          {getActionButtonText()}
+          Открыть чат
         </Button>
       )}
     </CardContainer>

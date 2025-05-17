@@ -11,7 +11,8 @@ const activities: Activity[] = [
     type: ActivityType.Workshop,
     registrationStatus: RegistrationStatus.Registered,
     totalSeats: 25,
-    occupiedSeats: 25
+    occupiedSeats: 25,
+    typeLabel: "Мастер-класс"
   },
   {
     id: "2",
@@ -22,7 +23,8 @@ const activities: Activity[] = [
     type: ActivityType.Workshop,
     registrationStatus: RegistrationStatus.WaitingList,
     totalSeats: 15,
-    occupiedSeats: 15
+    occupiedSeats: 15,
+    typeLabel: "Мастер-класс"
   },
   {
     id: "3",
@@ -34,7 +36,8 @@ const activities: Activity[] = [
     registrationStatus: RegistrationStatus.PendingConfirmation,
     totalSeats: 20,
     occupiedSeats: 18,
-    confirmationDeadline: new Date("2024-05-21T18:15:00")
+    confirmationDeadline: new Date("2024-05-21T18:15:00"),
+    typeLabel: "Мастер-класс"
   },
   {
     id: "4",
@@ -42,7 +45,9 @@ const activities: Activity[] = [
     startDateTime: new Date("2024-05-22T16:00:00"),
     endDateTime: new Date("2024-05-22T17:00:00"),
     description: "Увлекательная лекция о физиологии и эволюции лошадей.",
-    type: ActivityType.Lecture
+    type: ActivityType.Lecture,
+    typeLabel: "Лекция",
+    registrationStatus: RegistrationStatus.NotRegistered
   },
   {
     id: "5",
@@ -53,7 +58,8 @@ const activities: Activity[] = [
     type: ActivityType.Workshop,
     registrationStatus: RegistrationStatus.NotRegistered,
     totalSeats: 12,
-    occupiedSeats: 8
+    occupiedSeats: 8,
+    typeLabel: "Мастер-класс"
   },
   {
     id: "6",
@@ -61,7 +67,9 @@ const activities: Activity[] = [
     startDateTime: new Date("2024-05-23T17:00:00"),
     endDateTime: new Date("2024-05-23T18:00:00"),
     description: "Лекция о развитии ИИ от первых нейронных сетей до современных языковых моделей.",
-    type: ActivityType.Lecture
+    type: ActivityType.Lecture,
+    typeLabel: "Лекция",
+    registrationStatus: RegistrationStatus.Registered
   },
   {
     id: "7",
@@ -73,7 +81,8 @@ const activities: Activity[] = [
     registrationStatus: RegistrationStatus.PendingConfirmation,
     totalSeats: 15,
     occupiedSeats: 12,
-    confirmationDeadline: new Date("2024-05-23T18:00:00")
+    confirmationDeadline: new Date("2024-05-23T18:00:00"),
+    typeLabel: "Мастер-класс"
   }
 ];
 

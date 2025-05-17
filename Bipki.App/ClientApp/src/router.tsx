@@ -3,11 +3,12 @@ import { ProtectedRoute } from "./components/auth/protectedRoute/ProtectedRoute"
 import { Role } from "./types/User";
 import { GuestNavMenu } from "components/navigation/GuestNavMenu/GuestNavMenu";
 import { ActivityPage } from "./pages/user/ActivityPage/ActivityPage";
-import { Plan } from "components/pages/plan/Plan";
+import { Plan } from "pages/user/plan/Plan";
 import { LoginPage } from "./pages/user/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/user/RegisterPage/RegisterPage";
 import { AdminLoginPage } from "./pages/user/AdminLoginPage/AdminLoginPage";
 import { Navigate } from "react-router-dom";
+import { RegisteredPage } from 'pages/user/RegisteredPage/RegisteredPage';
 
 export const createRouter = (basename: string) =>
   createBrowserRouter(
@@ -49,6 +50,10 @@ export const createRouter = (basename: string) =>
             element: <GuestNavMenu />,
             children: [
               {
+                path: "/activity",
+                element: <ActivityPage />,
+              },
+              {
                 path: "/activity/:activityId",
                 element: <ActivityPage />,
               },
@@ -60,13 +65,17 @@ export const createRouter = (basename: string) =>
                 path: "/map",
                 element: <div>User Map</div>,
               },
+              {
+                path: "/registered",
+                element: <RegisteredPage />,
+              },
             ],
           },
         ],
       },
       {
         path: "*",
-        element: <Navigate to="/login" />
+        element: <Navigate to="/activity" />
       }
     ],
     { basename }

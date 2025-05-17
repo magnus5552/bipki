@@ -9,5 +9,6 @@ export interface Conference {
   startDate: Date;
   endDate: Date;
   address: string;
+  description: string;
   registrationStatus: RegistrationStatus;
 }

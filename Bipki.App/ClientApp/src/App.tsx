@@ -26,6 +26,10 @@ const theme = createTheme({
       main: '#2D2D2D',
       contrastText: '#A980E0',
     },
+    info: {
+      main: "#FFFFFF",
+      contrastText: "#2D2D2D",
+    },
   },
   components: {
     MuiCssBaseline: {
