@@ -4,5 +4,9 @@ namespace Bipki.Database.Repositories;
 
 public interface IConferenceRepository
 {
-    Conference? GetById(Guid id);
+    Task<Conference?> GetById(Guid id);
+
+    Task AddConference(Conference conference);
+
+    Task ChangeConference(Conference conference);
 }

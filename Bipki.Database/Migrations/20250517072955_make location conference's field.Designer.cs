@@ -3,6 +3,7 @@ using System;
 using Bipki.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bipki.Database.Migrations
 {
     [DbContext(typeof(BipkiContext))]
-    partial class BipkiContextModelSnapshot : ModelSnapshot
+    [Migration("20250517072955_make location conference's field")]
+    partial class makelocationconferencesfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,10 +140,6 @@ namespace Bipki.Database.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("description");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_date");
-
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text")
@@ -156,10 +155,6 @@ namespace Bipki.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("floor_plan");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_date");
 
                     b.HasKey("Id")
                         .HasName("conferences_pkey");
@@ -332,7 +327,7 @@ namespace Bipki.Database.Migrations
                         {
                             Id = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c7914205-031f-42ed-bd34-7f67ff5cd3d9",
+                            ConcurrencyStamp = "d9a4a3da-6fd1-422e-9f6e-27f8fda9ecac",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "admin",

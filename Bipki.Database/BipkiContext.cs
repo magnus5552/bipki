@@ -3,7 +3,6 @@ using Bipki.Database.Models.UserModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Bipki.Database;
 
@@ -17,8 +16,6 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<Conference> Conferences { get; set; }
 
     public virtual DbSet<Activity> Activities { get; set; }
-
-    public virtual DbSet<Location> Locations { get; set; }
 
     public virtual DbSet<ActivityRegistration> ActivityRegistrations { get; set; }
 
@@ -85,18 +82,17 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 .HasColumnType("character varying")
                 .HasColumnName("description");
 
-            entity.Property(e => e.LocationId).HasColumnName("location_id");
-
             entity.Property(e => e.Plan).HasColumnName("floor_plan"); // TODO probably needs change
 
+            entity.Property(e => e.Location).HasColumnName("location");
+
+            entity.Property(e => e.StartDate).HasColumnName("start_date");
+
+            entity.Property(e => e.EndDate).HasColumnName("end_date");
+            
             entity.Property(e => e.Deleted)
                 .HasDefaultValue(false)
                 .HasColumnName("deleted");
-
-            entity.HasOne(c => c.Location).WithMany(l => l.Conferences)
-                .HasForeignKey(c => c.LocationId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("conferences_location_id_fkey");
         });
 
         builder.Entity<Activity>(entity =>
@@ -135,20 +131,6 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
             entity.HasIndex(e => e.StartsAt)
                 .HasDatabaseName("IX_activities_starts_at");
-        });
-
-        builder.Entity<Location>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("locations_pkey");
-
-            entity.ToTable("locations");
-
-            entity.Property(e => e.Id)
-                .HasColumnName("id");
-
-            entity.Property(e => e.Deleted)
-                .HasDefaultValue(false)
-                .HasColumnName("deleted");
         });
 
         builder.Entity<ActivityRegistration>(entity =>

@@ -16,12 +16,13 @@ public class UserRepository: IUserRepository
         return dbContext.Users.FirstOrDefault(x => x.Id == id);
     }
 
-    public User? GetUserByCredentials(string name, string surname, string telegram)
+    public User? GetUserByCredentials(string name, string surname, string telegram, Guid  conferenceId)
     {
         var user = dbContext.Users.FirstOrDefault(x => 
             x.Name == name && 
             x.Surname == surname && 
-            x.Telegram == telegram);
+            x.Telegram == telegram &&
+            x.ConferenceId == conferenceId);
         return user;
     }
 }

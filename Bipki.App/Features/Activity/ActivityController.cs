@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bipki.App.Features.Activity;
 
+[Authorize]
 [Route("activities")]
 public class ActivitiesController : ControllerBase
 {
@@ -18,17 +19,17 @@ public class ActivitiesController : ControllerBase
         this.userManager = userManager;
     }
     
-    [HttpGet]
-    [Route("{activityId:guid}")]
-    public IActionResult GetActivity([FromRoute] Guid activityId)
-    {
-        throw new NotImplementedException();
-    }
+    // [HttpGet]
+    // [Route("{activityId:guid}")]
+    // public IActionResult GetActivity([FromRoute] Guid activityId)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     [HttpGet]
     [Route("{activityId:guid}")]
     [Authorize]
-    public IActionResult GetuserActivity([FromRoute] Guid activityId)
+    public IActionResult GetUserActivity([FromRoute] Guid activityId)
     {
         if (!Guid.TryParse(userManager.GetUserId(User), out var userId))
         {

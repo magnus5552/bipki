@@ -1,16 +1,10 @@
-﻿namespace Bipki.Database.Models;
+﻿namespace Bipki.App.Features.Admin.Requests;
 
-public class Conference
+public class CreateConferenceRequest
 {
-    public Guid Id { get; set; }
-    
     public string Name { get; set; } = null!;
     
     public string Description { get; set; } = null!;
-    
-    public string Plan { get; set; } = null!;
-
-    public Guid[] ActivityIds { get; set; } = null!;
     
     public DateTime StartDate { get; set; }
     

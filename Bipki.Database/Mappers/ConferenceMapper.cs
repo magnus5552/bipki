@@ -1,15 +1,47 @@
 using Bipki.Database.Models;
+using DatabaseConference = Bipki.Database.Models.BusinessModels.Conference;
 
 namespace Bipki.Database.Mappers;
 
 public static class ConferenceMapper
 {
-    public static Conference? Map(Models.BusinessModels.Conference? conference)
+    public static Conference? MapWithActivityIds(DatabaseConference? conference, Guid[] ids)
+    {
+        if (conference is null)
+        {
+            return null;
+        }
+        
+        var res = Map(conference);
+        res!.ActivityIds = ids;
+        return res;
+    }
+    
+    public static Conference? Map(DatabaseConference? conference)
         => conference is null
             ? null
             : new Conference
             {
                 Id = conference.Id,
-                
+                Name = conference.Name,
+                Description = conference.Description,
+                Plan = conference.Plan,
+                StartDate = conference.StartDate,
+                EndDate = conference.EndDate,
+                Location = conference.Location
+            };
+
+    public static DatabaseConference? Map(Conference? conference) =>
+        conference is null
+            ? null
+            : new DatabaseConference
+            {
+                Id = conference.Id,
+                Name = conference.Name,
+                Description = conference.Description,
+                Plan = conference.Plan,
+                Location = conference.Location,
+                StartDate = conference.StartDate,
+                EndDate = conference.EndDate
             };
 }
