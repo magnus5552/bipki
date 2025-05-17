@@ -1,6 +1,7 @@
 import { Box, Typography, Button, styled } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { Conference, RegistrationStatus } from "../../../types/Conference";
+import { RegistrationStatus } from "../../../types/Conference";
+import { getConference } from "../../../api/conferenceApi";
 
 const Time = styled(Typography)({
   fontSize: "12px",
@@ -22,18 +23,6 @@ const formatDate = (startDate: Date, endDate: Date) => {
   const startTime = startDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
   const endTime = endDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
   return `${day} ${month}, ${startTime} - ${endTime}`;
-};
-
-const getConference = async (): Promise<Conference> => {
-  // TODO: Заменить на реальный API запрос
-  return {
-    id: "1",
-    title: "НАЗВАНИЕ МЕРОПРИЯТИЯ",
-    startDate: new Date("2024-05-21T17:00:00"),
-    endDate: new Date("2024-05-21T18:00:00"),
-    address: "г. Екатеринбург, ул. Балбесная 32",
-    registrationStatus: RegistrationStatus.Registered,
-  };
 };
 
 export const ConferenceHeader = () => {

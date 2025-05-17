@@ -1,13 +1,12 @@
 export enum Role {
     Admin = 'Admin',
     User = 'User',
-    Guest = 'Guest'
 }
 
 export interface User {
     id: string;
     username: string;
-    email: string;
+    telegram: string;
     role: Role;
     isAuthenticated: boolean;
 } 
