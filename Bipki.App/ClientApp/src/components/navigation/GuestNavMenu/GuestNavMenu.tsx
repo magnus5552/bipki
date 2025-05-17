@@ -6,6 +6,8 @@ export const GuestNavMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isActivityPage = location.pathname.startsWith('/activity/');
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Box component="main" sx={{ flexGrow: 1, pb: 7 }}>
@@ -13,9 +15,11 @@ export const GuestNavMenu = () => {
       </Box>  
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
         <BottomNavigation
-          value={location.pathname}
+          value={isActivityPage ? '/activity/1' : location.pathname}
           onChange={(_, newValue) => {
-            navigate(newValue);
+            if (newValue !== '/activity/1') {
+              navigate(newValue);
+            }
           }}
           showLabels
           sx={{
@@ -30,8 +34,9 @@ export const GuestNavMenu = () => {
         >
           <BottomNavigationAction
             label="О мероприятии"
-            value="/conference"
+            value="/activity/1"
             icon={<Favorite />}
+            disabled
           />
           <BottomNavigationAction
             label="Программа"

@@ -18,9 +18,13 @@ const theme = createTheme({
       default: '#2D2D2D',
       paper: '#2D2D2D',
     },
-    text: {
-      primary: '#A980E0',
-      secondary: '#A980E0',
+    primary: {
+      main: '#A980E0',
+      contrastText: '#2D2D2D',
+    },
+    secondary: {
+      main: '#2D2D2D',
+      contrastText: '#A980E0',
     },
   },
   components: {
@@ -29,6 +33,14 @@ const theme = createTheme({
         body: {
           backgroundColor: '#2D2D2D',
           color: '#A980E0',
+        },
+        fontFamily: "Static/Body Small/Font",
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: "Static/Body Small/Font",
         },
       },
     },

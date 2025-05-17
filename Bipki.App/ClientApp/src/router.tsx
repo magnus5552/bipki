@@ -3,6 +3,9 @@ import { ProtectedRoute } from "./components/auth/protectedRoute/ProtectedRoute"
 import { Role } from "./types/User";
 import { Login } from "./components/pages/login/Login";
 import { GuestNavMenu } from 'components/navigation/GuestNavMenu/GuestNavMenu';
+import { ActivityPage } from "./pages/user/ActivityPage/ActivityPage";
+import { Plan } from 'components/pages/plan/Plan';
+
 export const createRouter = (basename: string) =>
   createBrowserRouter(
     [
@@ -32,12 +35,12 @@ export const createRouter = (basename: string) =>
         element: /*<ProtectedRoute requiredRole={Role.User} /> */ <GuestNavMenu />,
         children: [
           {
-            path: "/conference",
-            element: <div>User Dashboard</div>,
+            path: "/activity/:activityId",
+            element: <ActivityPage />,
           },
           {
             path: "/plan",
-            element: <div>User Plan</div>,
+            element: <Plan />,
           },
           {
             path: "/map",
