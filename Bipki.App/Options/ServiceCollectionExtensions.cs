@@ -1,4 +1,5 @@
-﻿namespace Bipki.App.Options;
+﻿
+namespace Bipki.App.Options;
 
 public static class ServiceCollectionExtensions
 {

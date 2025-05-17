@@ -40,6 +40,9 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
             entity.Property(e => e.ConferenceId).HasColumnName("conference_id");
 
+            entity.Property(e => e.CheckedIn).HasColumnName("checked_in")
+                .HasDefaultValue(false);
+
             entity.HasData(new User
             {
                 Id = Guid.Parse("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
@@ -89,7 +92,7 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.StartDate).HasColumnName("start_date");
 
             entity.Property(e => e.EndDate).HasColumnName("end_date");
-            
+
             entity.Property(e => e.Deleted)
                 .HasDefaultValue(false)
                 .HasColumnName("deleted");
