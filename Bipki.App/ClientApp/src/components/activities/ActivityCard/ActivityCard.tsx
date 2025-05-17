@@ -2,8 +2,6 @@ import { Box, Typography, Button, styled } from "@mui/material";
 import { Activity, ActivityType } from "../../../types/Activity";
 
 const CardContainer = styled(Box)({
-  position: "relative",
-  width: "294px",
   height: "323.28px",
   margin: "0 auto",
   padding: "16px",
