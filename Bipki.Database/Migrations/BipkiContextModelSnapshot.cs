@@ -41,7 +41,7 @@ namespace Bipki.Database.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("character varying")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<DateTime>("EndsAt")
@@ -51,7 +51,7 @@ namespace Bipki.Database.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying")
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("name");
 
                     b.Property<string>("Recording")
@@ -67,7 +67,7 @@ namespace Bipki.Database.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Type")
-                        .HasColumnType("activity_type")
+                        .HasColumnType("integer")
                         .HasColumnName("type");
 
                     b.HasKey("Id")
@@ -78,7 +78,10 @@ namespace Bipki.Database.Migrations
                     b.HasIndex("StartsAt")
                         .HasDatabaseName("IX_activities_starts_at");
 
-                    b.ToTable("activities", (string)null);
+                    b.ToTable("activities", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_activities_type_Enum", "type IN (0, 1)");
+                        });
                 });
 
             modelBuilder.Entity("Bipki.Database.Models.BusinessModels.ActivityRegistration", b =>
@@ -117,6 +120,52 @@ namespace Bipki.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("activity_registrations", (string)null);
+                });
+
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Chat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("chat_pkey");
+
+                    b.ToTable("chat", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_chat_type_Enum", "type IN (0, 1)");
+                        });
+                });
+
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.ChatUser", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("chat_id");
+
+                    b.HasKey("UserId", "ChatId")
+                        .HasName("chat_user_pkey");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("chat_user", (string)null);
                 });
 
             modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Conference", b =>
@@ -165,6 +214,40 @@ namespace Bipki.Database.Migrations
                         .HasName("conferences_pkey");
 
                     b.ToTable("conferences", (string)null);
+                });
+
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sender_id");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.HasKey("Id")
+                        .HasName("message_pkey");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("messages", (string)null);
                 });
 
             modelBuilder.Entity("Bipki.Database.Models.BusinessModels.WaitListEntry", b =>
@@ -250,6 +333,12 @@ namespace Bipki.Database.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("CheckedIn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("checked_in");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -332,7 +421,8 @@ namespace Bipki.Database.Migrations
                         {
                             Id = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c7914205-031f-42ed-bd34-7f67ff5cd3d9",
+                            CheckedIn = false,
+                            ConcurrencyStamp = "37fb796d-5739-427c-b7a1-69ee2be38d27",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "admin",
@@ -488,6 +578,39 @@ namespace Bipki.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.ChatUser", b =>
+                {
+                    b.HasOne("Bipki.Database.Models.BusinessModels.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("chat_user_chat_id_fkey");
+
+                    b.HasOne("Bipki.Database.Models.UserModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("chat_user_user_id_fkey");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Message", b =>
+                {
+                    b.HasOne("Bipki.Database.Models.BusinessModels.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("messages_chat_id_fkey");
+
+                    b.Navigation("Chat");
+                });
+
             modelBuilder.Entity("Bipki.Database.Models.BusinessModels.WaitListEntry", b =>
                 {
                     b.HasOne("Bipki.Database.Models.BusinessModels.Activity", "Activity")
@@ -565,6 +688,11 @@ namespace Bipki.Database.Migrations
                     b.Navigation("ActivityRegistrations");
 
                     b.Navigation("WaitList");
+                });
+
+            modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Bipki.Database.Models.BusinessModels.Conference", b =>

@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Bipki.Database.Migrations
 {
     /// <inheritdoc />
@@ -37,7 +39,8 @@ namespace Bipki.Database.Migrations
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     surname = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     telegram = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    conference_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    conference_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    checked_in = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -59,15 +62,36 @@ namespace Bipki.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "locations",
+                name: "chat",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
+                    Deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("chat_pkey", x => x.id);
+                    table.CheckConstraint("CK_chat_type_Enum", "type IN (0, 1)");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "conferences",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "character varying", nullable: false),
+                    floor_plan = table.Column<string>(type: "text", nullable: false),
+                    location = table.Column<string>(type: "text", nullable: false),
+                    start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("locations_pkey", x => x.id);
+                    table.PrimaryKey("conferences_pkey", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,25 +201,49 @@ namespace Bipki.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "conferences",
+                name: "chat_user",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying", maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "character varying", nullable: false),
-                    location_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    floor_plan = table.Column<string>(type: "text", nullable: false),
-                    deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    chat_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("conferences_pkey", x => x.id);
+                    table.PrimaryKey("chat_user_pkey", x => new { x.user_id, x.chat_id });
                     table.ForeignKey(
-                        name: "conferences_location_id_fkey",
-                        column: x => x.location_id,
-                        principalTable: "locations",
+                        name: "chat_user_chat_id_fkey",
+                        column: x => x.chat_id,
+                        principalTable: "chat",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "chat_user_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "messages",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    text = table.Column<string>(type: "text", nullable: false),
+                    ChatId = table.Column<Guid>(type: "uuid", nullable: false),
+                    sender_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("message_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "messages_chat_id_fkey",
+                        column: x => x.ChatId,
+                        principalTable: "chat",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,11 +251,12 @@ namespace Bipki.Database.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying", maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "character varying", nullable: false),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
                     starts_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ends_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    type = table.Column<int>(type: "activity_type", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
+                    TotalParticipants = table.Column<int>(type: "integer", nullable: false),
                     recording = table.Column<string>(type: "text", nullable: false),
                     ConferenceId = table.Column<Guid>(type: "uuid", nullable: true),
                     deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
@@ -215,6 +264,7 @@ namespace Bipki.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("activities_pkey", x => x.id);
+                    table.CheckConstraint("CK_activities_type_Enum", "type IN (0, 1)");
                     table.ForeignKey(
                         name: "FK_activities_conferences_ConferenceId",
                         column: x => x.ConferenceId,
@@ -231,6 +281,7 @@ namespace Bipki.Database.Migrations
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     registered_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Verified = table.Column<bool>(type: "boolean", nullable: false),
+                    NotificationEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -275,6 +326,29 @@ namespace Bipki.Database.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("4bcb87c6-3320-4de0-8e7c-c6765a08916b"), null, "User", "USER" },
+                    { new Guid("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5"), null, "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "conference_id", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "surname", "telegram", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"), 0, "37fb796d-5739-427c-b7a1-69ee2be38d27", null, null, false, false, null, "admin", null, "ADMIN", null, null, false, null, "admin", "adminTg", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { new Guid("4bcb87c6-3320-4de0-8e7c-c6765a08916b"), new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a") },
+                    { new Guid("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5"), new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -335,9 +409,14 @@ namespace Bipki.Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_conferences_location_id",
-                table: "conferences",
-                column: "location_id");
+                name: "IX_chat_user_chat_id",
+                table: "chat_user",
+                column: "chat_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messages_ChatId",
+                table: "messages",
+                column: "ChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_wait_list_entries_activity_id_waits_since",
@@ -372,10 +451,19 @@ namespace Bipki.Database.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "chat_user");
+
+            migrationBuilder.DropTable(
+                name: "messages");
+
+            migrationBuilder.DropTable(
                 name: "wait_list_entries");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "chat");
 
             migrationBuilder.DropTable(
                 name: "activities");
@@ -385,9 +473,6 @@ namespace Bipki.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "conferences");
-
-            migrationBuilder.DropTable(
-                name: "locations");
         }
     }
 }

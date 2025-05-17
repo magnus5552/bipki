@@ -1,4 +1,6 @@
 using Bipki.App.Features.Auth;
+using Bipki.App.Features.Chats;
+using Bipki.App.Features.Chats.Hubs;
 using Bipki.App.Options;
 using Bipki.Database;
 
@@ -23,6 +25,7 @@ var appOptions = ApplicationOptionsProvider.GetConfiguration().Get<ApplicationOp
 builder.Services.AddDatabaseServices(appOptions!.DatabaseOptions.DbConnectionString);
 
 builder.Services.AddIdentityServices();
+builder.Services.AddChats();
 
 var app = builder.Build();
 
@@ -47,10 +50,10 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<ChatHub>("/chats-hub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-
 app.Run();

@@ -20,6 +20,10 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<ActivityRegistration> ActivityRegistrations { get; set; }
 
     public virtual DbSet<WaitListEntry> WaitListEntries { get; set; }
+    
+    public virtual DbSet<Chat> Chats { get; set; }
+    
+    public virtual DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -107,16 +111,13 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.Id).HasColumnName("id");
 
             entity.Property(e => e.Name)
-                .HasColumnType("character varying")
                 .HasMaxLength(50)
                 .HasColumnName("name");
 
             entity.Property(e => e.Description)
-                .HasColumnType("character varying")
                 .HasColumnName("description");
 
             entity.Property(e => e.Type)
-                .HasColumnType("activity_type")
                 .HasColumnName("type");
 
             entity.Property(e => e.Recording)
@@ -187,20 +188,83 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
         builder.Entity<Role>(entity =>
         {
-            entity.HasData([
-                new Role
-                {
-                    Id = Guid.Parse("4bcb87c6-3320-4de0-8e7c-c6765a08916b"),
-                    Name = Bipki.Database.Models.UserModels.Roles.User,
-                    NormalizedName = Bipki.Database.Models.UserModels.Roles.User.Normalize().ToUpperInvariant(),
-                },
-                new Role
-                {
-                    Id = Guid.Parse("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5"),
-                    Name = Bipki.Database.Models.UserModels.Roles.Admin,
-                    NormalizedName = Bipki.Database.Models.UserModels.Roles.Admin.Normalize().ToUpperInvariant(),
-                }
-            ]);
+            entity.HasData(new Role
+            {
+                Id = Guid.Parse("4bcb87c6-3320-4de0-8e7c-c6765a08916b"),
+                Name = Bipki.Database.Models.UserModels.Roles.User,
+                NormalizedName = Bipki.Database.Models.UserModels.Roles.User.Normalize().ToUpperInvariant(),
+            }, new Role
+            {
+                Id = Guid.Parse("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5"),
+                Name = Bipki.Database.Models.UserModels.Roles.Admin,
+                NormalizedName = Bipki.Database.Models.UserModels.Roles.Admin.Normalize().ToUpperInvariant(),
+            });
         });
+
+        builder.Entity<Chat>(entity =>
+        {
+            entity.HasKey(e => e.Id)
+                .HasName("chat_pkey");
+
+            entity.ToTable("chat");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.Type).HasColumnName("type");
+
+            entity.Property(e => e.Title).HasColumnName("title");
+        });
+        
+        builder.Entity<ChatUser>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.ChatId })
+                .HasName("chat_user_pkey");
+
+            entity.ToTable("chat_user");
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.ChatId).HasColumnName("chat_id");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("chat_user_user_id_fkey");
+
+            entity.HasOne(d => d.Chat).WithMany()
+                .HasForeignKey(d => d.ChatId)
+                .HasConstraintName("chat_user_chat_id_fkey");
+        });
+        
+        
+        builder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.Id)
+                .HasName("message_pkey");
+
+            entity.ToTable("messages");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.Timestamp)
+                .HasColumnName("timestamp");
+
+            entity.Property(e => e.Text)
+                .HasColumnName("text");
+
+            entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id");
+
+            entity.HasOne(e => e.Chat)
+                .WithMany(e => e.Messages)
+                .HasForeignKey(e => e.ChatId)
+                .HasConstraintName("messages_chat_id_fkey");
+
+            entity.HasIndex(e => e.ChatId);
+        });
+    }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseEnumCheckConstraints();
     }
 }
