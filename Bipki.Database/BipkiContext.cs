@@ -40,6 +40,12 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 .HasMaxLength(50);
 
             entity.Property(e => e.ConferenceId).HasColumnName("conference_id");
+
+            entity.HasData(new User
+            {
+                Id = Guid.Parse("")
+            });
+
         });
 
         builder.Entity<Conference>(entity =>
@@ -172,6 +178,24 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
             entity.HasIndex(e => new { e.ActivityId, e.WaitsSince })
                 .HasDatabaseName("IX_wait_list_entries_activity_id_waits_since");
+        });
+
+        builder.Entity<Role>(entity =>
+        {
+            entity.HasData([
+                new Role
+                {
+                    Id = Guid.Parse("4bcb87c6-3320-4de0-8e7c-c6765a08916b"),
+                    Name = Bipki.Database.Models.UserModels.Roles.User,
+                    NormalizedName = Bipki.Database.Models.UserModels.Roles.User.Normalize().ToUpperInvariant(),
+                },
+                new Role
+                {
+                    Id = Guid.Parse("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5"),
+                    Name = Bipki.Database.Models.UserModels.Roles.Admin,
+                    NormalizedName = Bipki.Database.Models.UserModels.Roles.Admin.Normalize().ToUpperInvariant(),
+                }
+            ]);
         });
     }
 }

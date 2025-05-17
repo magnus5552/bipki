@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using Bipki.App.Options;
 using Bipki.Database.Models.UserModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using User = Bipki.Database.Models.User;
+using AuthorizationOptions = Bipki.App.Options.AuthorizationOptions;
 
 namespace Bipki.App.Features.Auth;
 
@@ -16,13 +16,16 @@ public class AuthController : ControllerBase
 {
     private readonly AuthorizationOptions authOptions;
     private readonly UserManager<User> userManager;
+    private readonly SignInManager<User> signInManager;
 
     public AuthController(
         IOptions<AuthorizationOptions> authOptions,
-        UserManager<User> userManager)
+        UserManager<User> userManager,
+        SignInManager<User> signInManager)
     {
         this.authOptions = authOptions.Value;
         this.userManager = userManager;
+        this.signInManager = signInManager;
     }
 
     [HttpPost("register")]
@@ -52,10 +55,10 @@ public class AuthController : ControllerBase
         {
             new(ClaimTypes.Name, user.Name),
             new(ClaimTypes.Surname, user.Surname),
-            new("Telegram", user.Telegram),
-            new(ClaimTypes.Role, Roles.User)
+            new("Telegram", user.Telegram)
         };
 
+        await userManager.AddToRoleAsync(user, Roles.User);
         await userManager.AddClaimsAsync(user, claims);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -64,7 +67,7 @@ public class AuthController : ControllerBase
             IsPersistent = true,
             ExpiresUtc = DateTimeOffset.UtcNow.AddDays(365)
         };
-
+        
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
@@ -83,19 +86,8 @@ public class AuthController : ControllerBase
         {
             return Unauthorized("Invalid credentials");
         }
-
-        var claims = await userManager.GetClaimsAsync(user);
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties
-        {
-            IsPersistent = true,
-            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(365)
-        };
-
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity),
-            authProperties);
+        await userManager.UpdateSecurityStampAsync(user);
+        await signInManager.SignInAsync(user, true);
 
         return Ok(new LoginResponse
         {
@@ -103,7 +95,7 @@ public class AuthController : ControllerBase
             Role = Roles.User
         });
     }
-
+    
     [HttpPost("login/admin")]
     public async Task<IActionResult> LoginAdmin([FromBody] Guid token)
     {
@@ -141,5 +133,10 @@ public class AuthController : ControllerBase
             User = user,
             Role = Roles.Admin
         });
+    }
+    [HttpGet("access-denied")]
+    public IActionResult AccessDenied()
+    {
+        return Unauthorized("Access denied");
     }
 }

@@ -1,7 +1,6 @@
+using Bipki.App.Features.Auth;
 using Bipki.App.Options;
 using Bipki.Database;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,19 +21,8 @@ builder.Services.AddAllOptions();
 
 var appOptions = ApplicationOptionsProvider.GetConfiguration().Get<ApplicationOptions>();
 builder.Services.AddDatabaseServices(appOptions!.DatabaseOptions.DbConnectionString);
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.Name = "Bipki.Auth";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.SlidingExpiration = true;
-    });
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddSwaggerGen();
+builder.Services.AddIdentityServices();
 
 var app = builder.Build();
 
@@ -51,10 +39,11 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UsePathBase("/api");
+
+
 app.UseRouting();
 app.UseCors();
-app.UsePathBase("/api");
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
