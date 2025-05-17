@@ -1,6 +1,5 @@
 ﻿using Bipki.App.Options;
 using Bipki.Database.Models.UserModels;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Options;
 namespace Bipki.App.Features.Admin;
 
 [ApiController]
-[Authorize(Roles = Roles.Admin)]
+[Authorize(Roles = Roles.User)]
 [Route("admin")]
 public class AdminController: ControllerBase
 {

@@ -103,31 +103,15 @@ public class AuthController : ControllerBase
         {
             return Unauthorized("Invalid token");
         }
-
-        var claims = new List<Claim>
+        var user = await userManager.FindByIdAsync("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a");
+        
+        if (user is null)
         {
-            new(ClaimTypes.Role, Roles.Admin)
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties
-        {
-            IsPersistent = true,
-            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(365)
-        };
-
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity),
-            authProperties);
-
-        var user = new User
-        {
-            Name = "Admin",
-            Surname = "User",
-            Telegram = "admin"
-        };
-
+            return BadRequest("Something went wrong");
+        }
+        
+        await userManager.UpdateSecurityStampAsync(user);
+        await signInManager.SignInAsync(user, true);
         return Ok(new LoginResponse
         {
             User = user,

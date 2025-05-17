@@ -11,7 +11,7 @@ public class User: IdentityUser<Guid>
 
     public string Telegram { get; set; } = null!;
 
-    public Guid ConferenceId { get; set; }
+    public Guid? ConferenceId { get; set; }
     
     public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
 

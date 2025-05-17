@@ -1,7 +1,9 @@
 ﻿using Bipki.Database.Models.BusinessModels;
 using Bipki.Database.Models.UserModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Bipki.Database;
 
@@ -43,9 +45,27 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
 
             entity.HasData(new User
             {
-                Id = Guid.Parse("")
+                Id = Guid.Parse("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
+                Name = "admin",
+                Surname = "admin",
+                UserName = "admin",
+                Telegram = "adminTg",
+                NormalizedUserName = "ADMIN"
             });
+        });
 
+        builder.Entity<IdentityUserRole<Guid>>(entity =>
+        {
+            entity.HasData(new IdentityUserRole<Guid>
+                {
+                    UserId = Guid.Parse("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
+                    RoleId = Guid.Parse("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5")
+                },
+                new IdentityUserRole<Guid>
+                {
+                    UserId = Guid.Parse("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
+                    RoleId = Guid.Parse("4bcb87c6-3320-4de0-8e7c-c6765a08916b")
+                });
         });
 
         builder.Entity<Conference>(entity =>

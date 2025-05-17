@@ -3,6 +3,7 @@ using System;
 using Bipki.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bipki.Database.Migrations
 {
     [DbContext(typeof(BipkiContext))]
-    partial class BipkiContextModelSnapshot : ModelSnapshot
+    [Migration("20250517011558_add admin")]
+    partial class addadmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -344,7 +347,7 @@ namespace Bipki.Database.Migrations
                         {
                             Id = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "efb8e06e-4764-40f3-9d02-c91a658704ca",
+                            ConcurrencyStamp = "e597ae36-25d3-4bb3-820f-e03359c7a621",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "admin",
@@ -445,11 +448,6 @@ namespace Bipki.Database.Migrations
                         {
                             UserId = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
                             RoleId = new Guid("5e2b6f6f-a877-46ca-9b82-cc7d6a4118d5")
-                        },
-                        new
-                        {
-                            UserId = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
-                            RoleId = new Guid("4bcb87c6-3320-4de0-8e7c-c6765a08916b")
                         });
                 });
 
