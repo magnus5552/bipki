@@ -11,6 +11,6 @@ public class NotificationsController : ControllerBase
     [HttpPost]
     public IActionResult Subscribe([FromBody] CreateNotificationsSubscriptionRequest request)
     {
-        
+        return Ok();
     }
 }

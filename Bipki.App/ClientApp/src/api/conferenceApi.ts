@@ -21,25 +21,25 @@ export interface CreateConferenceRequest {
 }
 
 export const getConferences = async (): Promise<Conference[]> => {
-  const response = await api.get<Conference[]>("/admin/conferences");
+  const response = await api.get<Conference[]>("/conferences");
   return response.data;
 };
 
 export const getConference = async (conferenceId: string): Promise<Conference> => {
-  const response = await api.get<Conference>(`/admin/conferences/${conferenceId}`);
+  const response = await api.get<Conference>(`/conferences/${conferenceId}`);
   return response.data;
 };
 
 export const updateConference = async (conferenceId: string, data: PatchConferenceRequest): Promise<void> => {
-  await api.patch(`/admin/conferences/${conferenceId}`, data);
+  await api.patch(`/conferences/${conferenceId}`, data);
 };
 
 export const createConference = async (data: CreateConferenceRequest): Promise<void> => {
-  await api.put("/admin/conferences", data);
+  await api.put("/conferences", data);
 };
 
 export const deleteConference = async (conferenceId: string): Promise<void> => {
-  await api.delete(`/admin/conferences/${conferenceId}`);
+  await api.delete(`/conferences/${conferenceId}`);
 };
 
 export const getConferenceQRCode = async (conferenceId: string): Promise<string> => {
@@ -48,5 +48,5 @@ export const getConferenceQRCode = async (conferenceId: string): Promise<string>
 };
 
 export const checkInGuest = async (userId: string): Promise<void> => {
-  await api.post(`/admin/checkInGuest/${userId}`);
+  await api.post(`/checkInGuest/${userId}`);
 };

@@ -4,6 +4,9 @@ namespace Bipki.Database.Repositories;
 
 public class NotificationSubscriptionRepository : INotificationSubscriptionRepository
 {
-    Guid? Create(NotificationSubscription sub);
+    public Guid? Create(NotificationSubscription sub)
+    {
+        return null;
+    }
     
 }
