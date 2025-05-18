@@ -66,8 +66,7 @@ public class ChatHub : Hub<IChatClient>
         await messageRepository.Add(messageModel);
         await Clients.Group(chatId.ToString()).ReceiveMessage(messageModel);
     }
-
-    // TODO
+    
     private async Task<bool> IsChatAllowedForUser(Chat chat, User user)
     {
         if (await userManager.IsInRoleAsync(user, Roles.Admin) ||

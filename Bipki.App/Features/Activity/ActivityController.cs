@@ -1,5 +1,6 @@
 ﻿using Bipki.App.Features.Activity.Create.Dto;
 using Bipki.App.Features.Activity.Update.Dto;
+using Bipki.Database.Models;
 using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +15,16 @@ public class ActivitiesController : ControllerBase
     private readonly IActivityRepository activityRepository;
     private readonly UserManager<User> userManager;
     private readonly RegistrationsManager registrationsManager;
+    private readonly IChatRepository chatRepository;
 
     public ActivitiesController(IActivityRepository activityRepository, UserManager<User> userManager,
-        RegistrationsManager registrationsManager)
+        RegistrationsManager registrationsManager,
+        IChatRepository chatRepository)
     {
         this.activityRepository = activityRepository;
         this.userManager = userManager;
         this.registrationsManager = registrationsManager;
+        this.chatRepository = chatRepository;
     }
     
     [HttpGet("{activityId:guid}")]
@@ -59,8 +63,15 @@ public class ActivitiesController : ControllerBase
             TotalSeats = request.TotalSeats,
             Id = Guid.NewGuid()
         };
-
+        
         await activityRepository.SaveAsync(activity);
+        
+        await chatRepository.Add(new Chat
+        {
+            Title = activity.Name,
+            Type = ChatType.Activity,
+            Id = activity.ChatId
+        });
         
         return Created($"activities/{activity.Id}", activity);
     }
@@ -89,7 +100,7 @@ public class ActivitiesController : ControllerBase
         if (request.TotalSeats is not null)
             activity.TotalSeats = request.TotalSeats.Value; // TODO manslaughter
 
-        var id = activityRepository.ChangeAsync(activity);
+        await activityRepository.ChangeAsync(activity);
         return NoContent();
     }
 
@@ -115,7 +126,7 @@ public class ActivitiesController : ControllerBase
 
     [HttpGet("{activityId:guid}/confirmRegistration")]
     [Authorize]
-    public IActionResult ComfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public IActionResult ConfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)

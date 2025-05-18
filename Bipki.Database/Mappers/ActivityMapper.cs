@@ -17,7 +17,8 @@ public static class ActivityMapper
                 StartsAt = activity.StartsAt,
                 EndsAt = activity.EndsAt,
                 Type = activity.Type,
-                Recording = activity.Recording
+                Recording = activity.Recording,
+                ChatId = activity.ChatId
             };
     
     public static Activity? Map(DbActivity? activity)
@@ -32,6 +33,7 @@ public static class ActivityMapper
                 StartsAt = activity.StartsAt,
                 EndsAt = activity.EndsAt,
                 Type = activity.Type,
-                Recording = activity.Recording
+                Recording = activity.Recording,
+                ChatId = activity.ChatId
             };
 }
