@@ -9,8 +9,6 @@ public class Conference
     public string Description { get; set; } = null!;
     
     public string Plan { get; set; } = null!;
-
-    public Guid[] ActivityIds { get; set; } = null!;
     
     public DateTime StartDate { get; set; }
     
