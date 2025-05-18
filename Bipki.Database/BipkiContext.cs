@@ -3,6 +3,7 @@ using Bipki.Database.Models.UserModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Bipki.Database;
 
@@ -355,5 +356,6 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
     {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder.UseEnumCheckConstraints();
+        optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
 }
