@@ -45,7 +45,7 @@ const ChatButton = styled(IconButtonStyled)({
 export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { conferenceId, activityId } = useParams();
+  const { activityId, conferenceId } = useParams();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const { data: conference } = useQuery({
@@ -53,13 +53,6 @@ export const Header = () => {
     queryFn: () => getConference(conferenceId!),
     enabled: !!conferenceId,
   });
-
-  const { data: qrCode } = useQuery({
-    queryKey: ["conferenceQrCode", conferenceId],
-    queryFn: () => getConferenceQrCode(conferenceId!),
-    enabled: !!conferenceId && isQrModalOpen,
-  });
-
   const { data: activity } = useQuery({
     queryKey: ["activity", activityId],
     queryFn: () => getActivity(activityId!),
@@ -113,7 +106,7 @@ export const Header = () => {
             <HomeIcon />
           </IconButtonStyled>
         )}
-        {conferenceId && (
+        {user.role === Role.User && (
           <IconButtonStyled onClick={() => setIsQrModalOpen(true)}>
             <QrCodeIcon />
           </IconButtonStyled>
@@ -146,11 +139,13 @@ export const Header = () => {
           <LogoutIcon />
         </IconButtonStyled>
       </Box>
-      <QrCodeModal
-        open={isQrModalOpen}
-        onClose={() => setIsQrModalOpen(false)}
-        qrCodeData={qrCode ?? null}
-      />
+      {user.conferenceId && (
+        <QrCodeModal
+          open={isQrModalOpen}
+          onClose={() => setIsQrModalOpen(false)}
+          conferenceId={user.conferenceId}
+        />
+      )}
     </HeaderContainer>
   );
 };

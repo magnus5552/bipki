@@ -1,10 +1,12 @@
-import { Modal, Box, IconButton } from '@mui/material';
+import { Modal, Box, IconButton, CircularProgress } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useQuery } from '@tanstack/react-query';
+import { getConferenceQrCode } from '../../../api/conferenceApi';
 
 interface QrCodeModalProps {
     open: boolean;
     onClose: () => void;
-    qrCodeData: Uint8Array | null;
+    conferenceId: string;
 }
 
 const style = {
@@ -19,7 +21,13 @@ const style = {
     p: 4,
 };
 
-export const QrCodeModal = ({ open, onClose, qrCodeData }: QrCodeModalProps) => {
+export const QrCodeModal = ({ open, onClose, conferenceId }: QrCodeModalProps) => {
+    const { data: qrCode, isLoading } = useQuery({
+        queryKey: ["conferenceQrCode", conferenceId],
+        queryFn: () => getConferenceQrCode(conferenceId),
+        enabled: open,
+    });
+
     return (
         <Modal
             open={open}
@@ -33,9 +41,13 @@ export const QrCodeModal = ({ open, onClose, qrCodeData }: QrCodeModalProps) => 
                 >
                     <CloseIcon />
                 </IconButton>
-                {qrCodeData && (
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : qrCode && (
                     <img
-                        src={`data:image/png;base64,${Buffer.from(qrCodeData).toString('base64')}`}
+                        src={`data:image/png;base64,${qrCode}`}
                         alt="QR Code"
                         style={{ width: '100%', height: 'auto' }}
                     />

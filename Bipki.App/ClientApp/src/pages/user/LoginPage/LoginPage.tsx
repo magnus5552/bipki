@@ -24,7 +24,7 @@ export const LoginPage: React.FC = () => {
     conferenceId: conferenceId ?? '',
   });
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -34,10 +34,10 @@ export const LoginPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && !isLoading) {
       navigate('/activity');
     }
-  }, [user, navigate]);
+  }, [user, isLoading, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

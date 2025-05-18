@@ -51,11 +51,7 @@ export const checkInGuest = async (userId: string): Promise<void> => {
   await api.post(`/checkInGuest/${userId}`);
 };
 
-export const getConferenceQrCode = async (conferenceId: string): Promise<Uint8Array> => {
-    const response = await api.get(`/api/conferences/${conferenceId}/qrcode`, {
-        headers: {
-            'Content-Type': 'application/octet-stream',
-        },
-    });
-    return new Uint8Array(response.data);
+export const getConferenceQrCode = async (conferenceId: string): Promise<string> => {
+    const response = await api.get<string>(`/conferences/${conferenceId}/qrcode`);
+    return response.data;
 };
