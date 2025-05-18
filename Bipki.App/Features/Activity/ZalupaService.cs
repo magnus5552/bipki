@@ -1,4 +1,5 @@
 ﻿using System.Threading.Channels;
+using Bipki.App.Features.Notifications;
 using Bipki.Database.Repositories;
 using TL;
 using Channel = System.Threading.Channels.Channel;
@@ -9,12 +10,15 @@ public class ZalupaService
 {
     private readonly IActivityRegistrationRepository activityRegistrationRepository;
     private readonly RegistrationsManager registrationsManager;
+    private readonly NotificationsManager notificationsManager;
     private readonly Channel<DeleteEvent> channel;
 
-    public ZalupaService(IActivityRegistrationRepository activityRegistrationRepository, RegistrationsManager registrationsManager)
+    public ZalupaService(IActivityRegistrationRepository activityRegistrationRepository, RegistrationsManager registrationsManager,
+        NotificationsManager notificationsManager)
     {
         this.activityRegistrationRepository = activityRegistrationRepository;
         this.registrationsManager = registrationsManager;
+        this.notificationsManager = notificationsManager;
         channel = Channel.CreateBounded<DeleteEvent>(new BoundedChannelOptions(15));
     }
 
@@ -62,7 +66,7 @@ public class ZalupaService
         while (!cancellationToken.IsCancellationRequested)
         {
             var deleteEvent = await channel.Reader.ReadAsync(cancellationToken);
-            await registrationsManager.DeleteUnverifiedRegistration(deleteEvent.Id);
+            var luckyFuckerId = await registrationsManager.DeleteUnverifiedRegistration(deleteEvent.Id);
         }
     }
 

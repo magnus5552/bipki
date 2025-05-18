@@ -1,4 +1,5 @@
 ﻿using Bipki.App.Features.Conference.Requests;
+using Bipki.App.Features.Notifications;
 using Bipki.Database.Models;
 using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
@@ -13,15 +14,17 @@ namespace Bipki.App.Features.Conference;
 public class ConferencesController : ControllerBase
 {
     private readonly IConferenceRepository conferenceRepository;
-    private readonly UserManager<User> userManager;
     private readonly IChatRepository chatRepository;
+    private readonly UserManager<User> userManager;
+    private readonly NotificationsManager notificationsManager;
 
     public ConferencesController(IConferenceRepository conferenceRepository, UserManager<User> userManager,
-        IChatRepository chatRepository)
+        IChatRepository chatRepository, NotificationsManager notificationsManager)
     {
         this.conferenceRepository = conferenceRepository;
         this.userManager = userManager;
         this.chatRepository = chatRepository;
+        this.notificationsManager = notificationsManager;
     }
 
     [HttpGet("{conferenceId:guid}")]
@@ -68,14 +71,23 @@ public class ConferencesController : ControllerBase
             return NotFound($"Conference with id:{conferenceId} does not exist");
         }
 
+        var sendNotification = false;
+        
         conference.Description = patchRequest.Description ?? conference.Description;
         conference.Name = patchRequest.Name ?? conference.Name;
         conference.Plan = patchRequest.Plan ?? conference.Plan;
         conference.Location = patchRequest.Location ?? conference.Location;
-        conference.StartDate = patchRequest.StartDate ?? conference.StartDate;
+        if (patchRequest.StartDate is not null)
+        {
+            conference.StartDate = patchRequest.StartDate.Value;
+            sendNotification = true;
+        }
         conference.EndDate = patchRequest.EndDate ?? conference.EndDate;
 
         await conferenceRepository.ChangeConference(conference);
+        await notificationsManager.SendAllInConference(
+            Templates.ConferenceNewDate(conference.Name, conference.StartDate),
+            conference.Id);
 
         return NoContent();
     }

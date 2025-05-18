@@ -39,16 +39,16 @@ public class RegistrationsManager
         return newRegistration.Id;
     }
 
-    public async Task Unregister(Guid activityId, Guid userId)
+    public async Task<Guid?> Unregister(Guid activityId, Guid userId)
     {
         var registration = dbContext.ActivityRegistrations.FirstOrDefault(r => r.ActivityId == activityId && r.UserId == userId);
         if (registration is null)
-            return;
+            return null;
 
         dbContext.ActivityRegistrations.Remove(registration);
         await dbContext.SaveChangesAsync();
 
-        await TopWaiterToRegister(activityId);
+        return await TopWaiterToRegister(activityId);
     }
     
     public async Task<bool> VerifyRegistration(Guid activityId , Guid userId)
@@ -97,29 +97,21 @@ public class RegistrationsManager
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task TopWaiterToRegister(Guid activityId)
+    public async Task<Guid?> TopWaiterToRegister(Guid activityId)
     {
         var entry = dbContext.WaitListEntries.Where(e => e.ActivityId == activityId)
             .OrderBy(e => e.WaitsSince).FirstOrDefault();
         if (entry is null)
-            return;
+            return null;
 
-        await RegisterFromWaitList(entry);
+        return await RegisterFromWaitList(entry);
     }
     
-    private async Task RegisterFromWaitList(WaitListEntry waitListEntry)
+    private async Task<Guid?> RegisterFromWaitList(WaitListEntry waitListEntry)
     {
         var activity = dbContext.Activities.FirstOrDefault(r => r.Id == waitListEntry.ActivityId);
         if (activity is null)
-            return;
-
-        var newRegistration = new ActivityRegistration
-        {
-            ActivityId = waitListEntry.ActivityId,
-            UserId = waitListEntry.UserId,
-            Verified = false,
-            RegisteredAt = DateTime.Now
-        };
+            return null;
 
         var transaction = await dbContext.Database.BeginTransactionAsync();
 
@@ -128,26 +120,34 @@ public class RegistrationsManager
         if (registrations.Count() == activity.TotalParticipants)
         {
             await transaction.RollbackAsync();
-            return;
+            return null;
         }
+        
+        var newRegistration = new ActivityRegistration
+        {
+            ActivityId = waitListEntry.ActivityId,
+            UserId = waitListEntry.UserId,
+            Verified = false,
+            RegisteredAt = DateTime.Now
+        };
 
         await dbContext.ActivityRegistrations.AddAsync(newRegistration);
         waitListEntry.Deleted = true;
         await transaction.CommitAsync();
-        
-        // TODO send confirmation notification
+
+        return newRegistration.Id;
     }
 
-    public async Task DeleteUnverifiedRegistration(Guid registrationId)
+    public async Task<Guid?> DeleteUnverifiedRegistration(Guid registrationId)
     {
         var registration = dbContext.ActivityRegistrations.FirstOrDefault(r => r.Id == registrationId);
-        if (registration is null || registration.Verified) return;
+        if (registration is null || registration.Verified) return null;
 
         var activityId = registration.ActivityId;
         dbContext.ActivityRegistrations.Remove(registration);
         await dbContext.SaveChangesAsync();
 
-        await TopWaiterToRegister(activityId);
+        return await TopWaiterToRegister(activityId);
     }
     
     public async Task Shrink(Guid activityId)
