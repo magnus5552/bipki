@@ -11,4 +11,5 @@ public interface IActivityRepository
     Task<Activity?> GetByChatId(Guid id);
 
     Task ChangeAsync(Activity activity);
+    Task<bool> ExistsAsync(Guid id);
 }

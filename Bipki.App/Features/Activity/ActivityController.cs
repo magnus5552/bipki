@@ -126,9 +126,8 @@ public class ActivitiesController : ControllerBase
         
         var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
 
-        if (await registrationsManager.Unregister(activity, userId))
-            return Ok();
-        return Conflict();
+        await registrationsManager.Unregister(activityId, userId);
+        return Ok();
     }
 
     [HttpGet("{activityId:guid}/confirmRegistration")]
@@ -144,5 +143,33 @@ public class ActivitiesController : ControllerBase
         if (await registrationsManager.VerifyRegistration(activityId, userId))
             return Ok();
         return Conflict();
+    }
+    
+    [HttpGet("{activityId:guid}/enterWaitList")]
+    [Authorize]
+    public async Task<IActionResult> EnterWaitList([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    {
+        var activity = activityRepository.GetById(activityId);
+        if (activity is null || activity.ConferenceId != conferenceId)
+            return BadRequest();
+        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        var id = await registrationsManager.EnterWaitList(activity, userId);
+        return id is null ? Conflict() : Ok();
+    }
+    
+    [HttpGet("{activityId:guid}/exitWaitList")]
+    [Authorize]
+    public async Task<IActionResult> ExitWaitList([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    {
+        var activity = activityRepository.GetById(activityId);
+        if (activity is null || activity.ConferenceId != conferenceId)
+            return BadRequest();
+        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        await registrationsManager.ExitWaitList(activityId, userId);
+        return Ok();
     }
 }

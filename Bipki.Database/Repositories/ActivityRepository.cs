@@ -91,7 +91,7 @@ public class ActivityRepository : IActivityRepository
             dbContext.Activities.Update(dbActivity);
         }
     }
-    
+
     public async Task<Activity?> GetByChatId(Guid chatId)
     {
         var activity = await dbContext.Activities
@@ -100,4 +100,12 @@ public class ActivityRepository : IActivityRepository
 
         return ActivityMapper.Map(activity);
     }
+
+    public async Task<bool> ExistsAsync(Guid id) => await dbContext.Activities.FindAsync(id) is not null;
 }
+
+// NOTE: maybe later
+/*public interface IConferenceActivityRepository : IActivityRepository
+{
+    IActivityRepository Conference(Guid conferenceId);
+}*/

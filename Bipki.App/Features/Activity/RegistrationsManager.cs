@@ -40,9 +40,14 @@ public class RegistrationsManager
         return newRegistration.Id;
     }
 
-    public Task<bool> Unregister(ActivityDto activity, Guid userId)
+    public async Task Unregister(Guid activityId, Guid userId)
     {
-        throw new NotImplementedException();
+        var registration = dbContext.ActivityRegistrations.FirstOrDefault(r => r.ActivityId == activityId && r.UserId == userId);
+        if (registration is null)
+            return;
+
+        dbContext.ActivityRegistrations.Remove(registration);
+        await dbContext.SaveChangesAsync();
     }
     
     public async Task<bool> VerifyRegistration(Guid activityId , Guid userId)
@@ -50,15 +55,16 @@ public class RegistrationsManager
         var registration = dbContext.ActivityRegistrations.FirstOrDefault(r => r.ActivityId == activityId && r.UserId == userId);
         if (registration is null || registration.Verified)
             return false;
+
         registration.Verified = true;
+        await dbContext.SaveChangesAsync();
+
         return true;
     }
 
     public async Task<Guid?> EnterWaitList(ActivityDto activity, Guid userId)
     {
-        var dbActivity = dbContext.Activities.FirstOrDefault(a => a.Id == activity.Id);
-        if (dbActivity is null)
-            return null;
+        var dbActivity = dbContext.Activities.FirstOrDefault(a => a.Id == activity.Id)!;
 
         var transaction = await dbContext.Database.BeginTransactionAsync();
 
@@ -75,6 +81,16 @@ public class RegistrationsManager
         await transaction.CommitAsync();
 
         return newWaitListEntry.Id;
+    }
+    
+    public async Task ExitWaitList(Guid activityId, Guid userId)
+    {
+        var waitListEntry = dbContext.WaitListEntries.FirstOrDefault(w => w.Id == activityId && w.UserId == userId);
+        if (waitListEntry is null)
+            return;
+
+        dbContext.WaitListEntries.Remove(waitListEntry);
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<Guid?> RegisterFromWaitList(Guid waitListEntryId)
