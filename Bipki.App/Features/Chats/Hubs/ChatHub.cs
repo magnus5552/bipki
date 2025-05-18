@@ -72,7 +72,7 @@ public class ChatHub : Hub<IChatClient>
             Text = message,
             ChatId = chatId,
             SenderId = user.Id,
-            SenderName = user.Name + user.Surname,
+            SenderName = user.Name +" " + user.Surname,
             Id = Guid.NewGuid()
         };
 

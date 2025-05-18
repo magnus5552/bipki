@@ -3,8 +3,10 @@ using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using AuthorizationOptions = Bipki.App.Options.AuthorizationOptions;
 
@@ -50,7 +52,7 @@ public class AuthController : ControllerBase
 
         var user = new User
         {
-            UserName = $"{request.Name}_{request.Surname}_{request.ConferenceId}",
+            UserName = $"{request.Name} {request.Surname} {request.Telegram}",
             Name = request.Name,
             Surname = request.Surname,
             Telegram = request.Telegram,
@@ -87,11 +89,16 @@ public class AuthController : ControllerBase
         await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
-        return Ok(new LoginResponse
+        var model = new UserModel
         {
-            User = user,
-            Role = Roles.User
-        });
+            Id = user.Id,
+            UserName = user.Name +" " + user.Surname,
+            Telegram = user.Telegram,
+            Role = Roles.User,
+            ConferenceId = user.ConferenceId
+        };
+
+        return Ok(model);
     }
 
     [HttpPost("login/admin")]
@@ -111,13 +118,39 @@ public class AuthController : ControllerBase
 
         await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
-        return Ok(new LoginResponse
-        {
-            User = user,
-            Role = Roles.Admin
-        });
-    }
 
+        var model = new UserModel
+        {
+            Id = user.Id,
+            UserName = user.Name + "  " + user.Surname,
+            Telegram = user.Telegram,
+            Role = Roles.Admin,
+            ConferenceId = user.ConferenceId
+        };
+        
+        return Ok(model);
+    }
+    
+    [Authorize]
+    [HttpGet("Login")]
+    public async Task<IActionResult> Login()
+    {
+        var user = await userManager.GetUserAsync(HttpContext.User);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        var model = new UserModel
+        {
+            Id = user.Id,
+            UserName = user.Name + "  " + user.Surname,
+            Telegram = user.Telegram,
+            Role = Roles.Admin,
+            ConferenceId = user.ConferenceId
+        };
+        return Ok(model);
+    }
+    
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
