@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Bipki.App.Options;
+﻿namespace Bipki.App.Options;
 
 public static class ApplicationOptionsProvider
 {

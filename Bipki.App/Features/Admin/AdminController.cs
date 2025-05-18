@@ -1,10 +1,7 @@
-﻿using Bipki.App.Options;
-using Bipki.Database.Models;
-using Bipki.Database.Models.UserModels;
+﻿using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Bipki.App.Features.Admin;
 

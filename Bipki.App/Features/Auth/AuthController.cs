@@ -1,12 +1,8 @@
-using System.Security.Claims;
 using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using AuthorizationOptions = Bipki.App.Options.AuthorizationOptions;
 

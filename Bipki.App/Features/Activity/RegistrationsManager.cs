@@ -1,6 +1,5 @@
 ﻿using Bipki.Database;
 using Bipki.Database.Models.BusinessModels;
-using Bipki.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 using ActivityDto = Bipki.Database.Models.Activity;
 
