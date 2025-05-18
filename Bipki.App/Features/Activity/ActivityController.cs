@@ -37,11 +37,7 @@ public class ActivitiesController : ControllerBase
     [Authorize]
     public IActionResult GetUserActivity([FromRoute] Guid activityId)
     {
-        if (!Guid.TryParse(userManager.GetUserId(User), out var userId))
-        {
-            return Unauthorized();
-        }
-
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
         return Ok(activityRepository.GetUserActivity(userId, activityId));
     }
     
@@ -106,32 +102,47 @@ public class ActivitiesController : ControllerBase
 
     [HttpGet("{activityId:guid}/register")]
     [Authorize]
-    public IActionResult Register([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> Register([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
 
-        throw new NotImplementedException();
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        var registrationId = await registrationsManager.Register(activity, userId);
+        if (registrationId is null)
+            return Conflict();
+        return Ok(registrationId);
     }
 
     [HttpGet("{activityId:guid}/unregister")]
     [Authorize]
-    public IActionResult Unregister([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> Unregister([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
+        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        if (await registrationsManager.Unregister(activity, userId))
+            return Ok();
+        return Conflict();
     }
 
     [HttpGet("{activityId:guid}/confirmRegistration")]
     [Authorize]
-    public IActionResult ConfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> ConfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
         
-        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        if (await registrationsManager.VerifyRegistration(activityId, userId))
+            return Ok();
+        return Conflict();
     }
 }
