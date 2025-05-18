@@ -1,3 +1,5 @@
+using System.Formats.Asn1;
+using Bipki.App.Features.Activity;
 using Bipki.App.Features.Auth;
 using Bipki.App.Features.Chats;
 using Bipki.App.Features.Chats.Hubs;
@@ -26,6 +28,7 @@ builder.Services.AddDatabaseServices(appOptions!.DatabaseOptions.DbConnectionStr
 
 builder.Services.AddIdentityServices();
 builder.Services.AddChats();
+builder.Services.AddActivitiesServices();
 
 var app = builder.Build();
 
@@ -56,4 +59,12 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
+
+using var scope = app.Services.CreateScope();
+var waitService = scope.ServiceProvider.GetRequiredService<ZalupaService>();
+using(var cts = new CancellationTokenSource())
+{
+    app.Lifetime.ApplicationStopping.Register(() => cts.Cancel());
+    _ = waitService.Start(cts.Token);
+}
 app.Run();
