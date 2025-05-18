@@ -48,11 +48,7 @@ export const RegisterPage: React.FC = () => {
     registerMutation.mutate(formData);
   };
 
-  const goToLogin = () => {
-    // Сохраняем conferenceId при переходе на страницу логина
-    const searchParams = new URLSearchParams(location.search);
-    const conferenceId = searchParams.get('conferenceId');
-    
+  const goToLogin = () => {    
     if (conferenceId) {
       navigate(`/login?conferenceId=${conferenceId}`);
     } else {
@@ -97,6 +93,14 @@ export const RegisterPage: React.FC = () => {
             name="password"
             type="password"
             value={formData.password}
+            onChange={handleChange}
+            variant="standard"
+            fullWidth
+          />
+          <StyledTextField
+            label="Id конференции"
+            name="conferenceId"
+            value={formData.conferenceId}
             onChange={handleChange}
             variant="standard"
             fullWidth

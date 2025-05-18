@@ -12,6 +12,7 @@ import {
 } from '../../../components/auth/AuthComponents/AuthComponents';
 import { login } from '../../../api/authApi';
 import { LoginCredentials } from '../../../types/Auth';
+import { useUser } from '../../../hooks/useUser';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,12 +24,20 @@ export const LoginPage: React.FC = () => {
     conferenceId: conferenceId ?? '',
   });
 
+  const { user } = useUser();
+
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate('/activities');
+      navigate('/activity');
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      navigate('/activity');
+    }
+  }, [user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -1,13 +1,16 @@
 import { Box, Typography, IconButton, styled, Stack } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUser, logout } from "../../../api/authApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Role } from "types/User";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import { getConference } from 'api/conferenceApi';
+import { getConference, getConferenceQrCode } from 'api/conferenceApi';
 import { getActivity } from 'api/activityApi';
+import { QrCodeModal } from "../QrCodeModal/QrCodeModal";
+import { useState } from "react";
 
 const HeaderContainer = styled(Stack)({
   height: "56px",
@@ -43,11 +46,18 @@ export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { conferenceId, activityId } = useParams();
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const { data: conference } = useQuery({
     queryKey: ["conference", conferenceId],
     queryFn: () => getConference(conferenceId!),
     enabled: !!conferenceId,
+  });
+
+  const { data: qrCode } = useQuery({
+    queryKey: ["conferenceQrCode", conferenceId],
+    queryFn: () => getConferenceQrCode(conferenceId!),
+    enabled: !!conferenceId && isQrModalOpen,
   });
 
   const { data: activity } = useQuery({
@@ -103,6 +113,11 @@ export const Header = () => {
             <HomeIcon />
           </IconButtonStyled>
         )}
+        {conferenceId && (
+          <IconButtonStyled onClick={() => setIsQrModalOpen(true)}>
+            <QrCodeIcon />
+          </IconButtonStyled>
+        )}
       </Box>
       {user && chatId && (
         <ChatButton
@@ -131,6 +146,11 @@ export const Header = () => {
           <LogoutIcon />
         </IconButtonStyled>
       </Box>
+      <QrCodeModal
+        open={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        qrCodeData={qrCode ?? null}
+      />
     </HeaderContainer>
   );
 };

@@ -50,3 +50,12 @@ export const getConferenceQRCode = async (conferenceId: string): Promise<string>
 export const checkInGuest = async (userId: string): Promise<void> => {
   await api.post(`/checkInGuest/${userId}`);
 };
+
+export const getConferenceQrCode = async (conferenceId: string): Promise<Uint8Array> => {
+    const response = await api.get(`/api/conferences/${conferenceId}/qrcode`, {
+        headers: {
+            'Content-Type': 'application/octet-stream',
+        },
+    });
+    return new Uint8Array(response.data);
+};

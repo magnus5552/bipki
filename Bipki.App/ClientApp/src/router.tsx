@@ -15,6 +15,8 @@ import { ActivitiesList } from "pages/admin/ActivitiesList/ActivitiesList";
 import { ActivityEdit } from "pages/admin/ActivityEdit/ActivityEdit";
 import { ConferenceEdit } from "pages/admin/ConferenceEdit/ConferenceEdit";
 import { ChatPage } from "pages/user/ChatPage/ChatPage";
+import { UserMap } from "pages/user/UserMap/UserMap";
+import { AdminMap } from "pages/admin/AdminMap/AdminMap";
 
 export const createRouter = (basename: string) =>
   createBrowserRouter(
@@ -61,7 +63,7 @@ export const createRouter = (basename: string) =>
               },
               {
                 path: "map",
-                element: <div>Admin Map</div>,
+                element: <AdminMap />,
               },
               {
                 path: "chat/:chatId",
@@ -91,7 +93,7 @@ export const createRouter = (basename: string) =>
               },
               {
                 path: "/map",
-                element: <div>User Map</div>,
+                element: <UserMap />,
               },
               {
                 path: "/registered",
