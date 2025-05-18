@@ -56,7 +56,7 @@ export const Header = () => {
     enabled: !!activityId,
   });
 
-  const chatId = conference?.chatId ?? activity?.chatId;
+  const chatId =  activity?.chatId ?? conference?.chatId;
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
