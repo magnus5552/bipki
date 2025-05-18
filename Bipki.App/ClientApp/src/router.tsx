@@ -17,6 +17,7 @@ import { ConferenceEdit } from "pages/admin/ConferenceEdit/ConferenceEdit";
 import { ChatPage } from "pages/user/ChatPage/ChatPage";
 import { UserMap } from "pages/user/UserMap/UserMap";
 import { AdminMap } from "pages/admin/AdminMap/AdminMap";
+import { UserStatusPage } from "pages/admin/UserStatusPage/UserStatusPage";
 
 export const createRouter = (basename: string) =>
   createBrowserRouter(
@@ -48,6 +49,10 @@ export const createRouter = (basename: string) =>
           {
             path: "conferences/:conferenceId/activities/:activityId/edit",
             element: <ActivityEdit />,
+          },
+          {
+            path: "userstatus",
+            element: <UserStatusPage />,
           },
           {
             element: <AdminNavMenu />,

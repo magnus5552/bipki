@@ -6,6 +6,7 @@ import { ActivityCard } from "components/activities/ActivityCard/ActivityCard";
 import { Box, Typography, Fab } from "@mui/material";
 import { useConference } from 'hooks/useConference';
 import EditIcon from '@mui/icons-material/Edit';
+import { useActivityRegistration } from 'hooks/useActivityRegistration';
 
 export function ActivityPage() {
   const { activityId } = useParams();
@@ -21,8 +22,9 @@ export function ActivityPage() {
   });
 
   const { user, conference, isLoading } = useConference();
+  const { handleAction, isLoading: isActionLoading } = useActivityRegistration(activityId ?? "");
 
-  if (isLoading || isActivityLoading) {
+  if (isLoading || isActivityLoading || isActionLoading) {
     return <Loader />;
   }
 
@@ -63,9 +65,7 @@ export function ActivityPage() {
   return (
     <ActivityCard
       activity={activity}
-      onAction={() => {
-        throw new Error("Not implemented");
-      }}
+      onAction={() => handleAction(activity.registrationStatus)}
     />
   );
 }

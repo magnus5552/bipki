@@ -1,6 +1,6 @@
 ﻿services:
   bipki.app:
-    image: bipki.app
+    image: cr.yandex/crpje3cduu7tg6bca381/bipki.app:1.0.0
     build:
       context: .
       dockerfile: Bipki.App/Dockerfile

@@ -1,13 +1,11 @@
 import {
   Box,
   Typography,
-  Button,
   styled,
   Chip,
 } from "@mui/material";
 import {
   Activity,
-  ActivityType,
 } from "../../../types/Activity";
 
 
@@ -89,24 +87,11 @@ interface ActivityCardProps {
 }
 
 export const ActivityCard = ({ activity, onAction }: ActivityCardProps) => {
-  function openChat(id: string): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <CardContainer>
       <ActivityTitle activity={activity} onAction={onAction} marginBottom="16px" />
       <Description>{activity.description}</Description>
-      {activity.type === ActivityType.Workshop && (
-        <Button
-          onClick={() => openChat(activity.id)}
-          variant="contained"
-          fullWidth
-          color="info"
-        >
-          Открыть чат
-        </Button>
-      )}
     </CardContainer>
   );
 };

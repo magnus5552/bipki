@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { Box } from '@mui/material';
@@ -33,11 +33,10 @@ export const LoginPage: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    if (user && !isLoading) {
-      navigate('/activity');
-    }
-  }, [user, isLoading, navigate]);
+  if (user && !isLoading) {
+    navigate('/activity');
+    return null;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -3,6 +3,7 @@ import { getActivities } from "api/activityApi";
 import { Loader } from "components/common/Loader/Loader";
 import { CollapsedActivityCard } from "components/activities/ActivityCard/CollapsedActivityCard";
 import { Box } from "@mui/material";
+import { useActivityRegistration } from "hooks/useActivityRegistration";
 
 export function Plan() {
   const {
@@ -14,7 +15,9 @@ export function Plan() {
     queryFn: getActivities,
   });
 
-  if (isLoading) {
+  const { handleAction, isLoading: isActionLoading } = useActivityRegistration("");
+
+  if (isLoading || isActionLoading) {
     return <Loader />;
   }
 
@@ -28,9 +31,7 @@ export function Plan() {
         <CollapsedActivityCard
           key={activity.id}
           activity={activity}
-          onAction={() => {
-            throw new Error("Not implemented");
-          }}
+          onAction={() => handleAction(activity.registrationStatus)}
         />
       ))}
     </Box>
