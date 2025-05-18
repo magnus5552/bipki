@@ -61,7 +61,8 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 Surname = "admin",
                 UserName = "admin",
                 Telegram = "adminTg",
-                NormalizedUserName = "ADMIN"
+                NormalizedUserName = "ADMIN",
+                SecurityStamp = "oikamsda"
             });
         });
 

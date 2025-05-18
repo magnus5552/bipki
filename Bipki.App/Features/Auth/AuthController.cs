@@ -52,16 +52,18 @@ public class AuthController : ControllerBase
             Name = request.Name,
             Surname = request.Surname,
             Telegram = request.Telegram,
-            ConferenceId = request.ConferenceId
+            ConferenceId = request.ConferenceId,
+            SecurityStamp = Guid.NewGuid().ToString()
         };
 
-        var result = await userManager.CreateAsync(user);
+        var result = await userManager.CreateAsync(user, password: request.Password);
         if (!result.Succeeded)
         {
             return BadRequest(result.Errors);
         }
 
         await userManager.AddToRoleAsync(user, Roles.User);
+        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         return Ok();
@@ -81,6 +83,14 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid credentials");
         }
 
+        var passwordValid = await userManager.CheckPasswordAsync(user, password: request.Password);
+
+        if (!passwordValid)
+        {
+            return Unauthorized("Invalid password");
+        }
+        
+        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         var model = new UserModel
@@ -110,6 +120,7 @@ public class AuthController : ControllerBase
             return BadRequest("Something went wrong");
         }
 
+        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         var model = new UserModel

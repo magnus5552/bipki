@@ -8,5 +8,7 @@ public class UserAuthRequest
     
     public string Telegram { get; set; } = null!;
     
+    public string Password { get; set; } = null!;
+    
     public Guid ConferenceId { get; set; }
 } 

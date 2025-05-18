@@ -5,18 +5,6 @@ namespace Bipki.Database.Mappers;
 
 public static class ConferenceMapper
 {
-    public static Conference? MapWithActivityIds(DatabaseConference? conference, Guid[] ids)
-    {
-        if (conference is null)
-        {
-            return null;
-        }
-        
-        var res = Map(conference);
-        res!.ActivityIds = ids;
-        return res;
-    }
-    
     public static Conference? Map(DatabaseConference? conference)
         => conference is null
             ? null
