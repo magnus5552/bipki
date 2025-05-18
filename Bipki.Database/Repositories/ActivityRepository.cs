@@ -2,6 +2,7 @@
 using Bipki.Database.Models;
 using Bipki.Database.Models.BusinessModels;
 using Activity = Bipki.Database.Models.Activity;
+using DbActivity = Bipki.Database.Models.BusinessModels.Activity;
 
 namespace Bipki.Database.Repositories;
 
@@ -58,5 +59,33 @@ public class ActivityRepository : IActivityRepository
             TotalSeats = activity.TotalParticipants,
             OccupiedSeats = occupiedSeats
         };
+    }
+
+    public Guid? Save(Activity activity)
+    {
+        if (activity.StartsAt < activity.EndsAt || activity.TotalSeats < 0)
+            return null;
+        
+        var dbActivity = new DbActivity
+        {
+            Id = activity.Id ?? Guid.NewGuid(),
+            ConferenceId = activity.ConferenceId,
+            Name = activity.Name,
+            Description = activity.Description,
+            StartsAt = activity.StartsAt,
+            EndsAt = activity.EndsAt,
+            TotalParticipants = activity.TotalSeats
+        };
+
+        dbContext.Activities.Add(dbActivity);
+        try
+        {
+            dbContext.SaveChanges();
+        } catch
+        {
+            return null;
+        }
+
+        return dbActivity.Id;
     }
 }

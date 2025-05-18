@@ -4,6 +4,8 @@ namespace Bipki.Database.Models.BusinessModels;
 
 public class Activity : Entity
 {
+    public Guid ConferenceId { get; set; }
+    
     public string Name { get; set; } = null!;
     
     public string Description { get; set; } = null!;
@@ -18,12 +20,13 @@ public class Activity : Entity
     
     public Guid ChatId { get; set; }
     
-    // TODO communication channel
     public string Recording { get; set; } = null!;
-
-    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
-
+    
+    public virtual Conference Conference { get; set; }
+    
     public virtual Chat Chat { get; set; } = null!;
+
+    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; }
 
     public virtual IEnumerable<WaitListEntry> WaitList { get; set; } = null!;
 }

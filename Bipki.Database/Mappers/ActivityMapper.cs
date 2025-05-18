@@ -10,6 +10,7 @@ public static class ActivityMapper
             : new Activity
             {
                 Id = activity.Id,
+                ConferenceId = activity.ConferenceId,
                 Name = activity.Name,
                 Description = activity.Description,
                 StartsAt = activity.StartsAt,

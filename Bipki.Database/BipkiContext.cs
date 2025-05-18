@@ -137,9 +137,13 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.Deleted)
                 .HasDefaultValue(false)
                 .HasColumnName("deleted");
-
+            
             entity.Property(e => e.ChatId)
                 .HasColumnName("chat_id");
+
+            entity.HasOne(e => e.Conference).WithMany(c => c.Program)
+                .HasForeignKey(e => e.ConferenceId)
+                .HasConstraintName("activities_conference_id_fkey");
 
             entity.HasOne(e => e.Chat)
                 .WithOne(e => e.Activity)
