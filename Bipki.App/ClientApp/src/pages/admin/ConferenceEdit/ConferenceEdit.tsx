@@ -17,6 +17,7 @@ export const ConferenceEdit = () => {
     endDate: "",
     location: "",
     description: "",
+    mapLink: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -38,6 +39,7 @@ export const ConferenceEdit = () => {
           : "",
         location: conference.address || "",
         description: conference.description || "",
+        mapLink: conference.mapLink || "",
       });
     }
   }, [conference]);
@@ -124,6 +126,7 @@ export const ConferenceEdit = () => {
       endDate: new Date(form.endDate),
       location: form.location,
       description: form.description,
+      mapLink: form.mapLink,
     };
 
     if (isCreate) {
@@ -215,6 +218,16 @@ export const ConferenceEdit = () => {
           required
           error={!!errors.description}
           helperText={errors.description}
+        />
+        <TextField
+          label="Ссылка на карту"
+          name="mapLink"
+          value={form.mapLink}
+          onChange={handleChange}
+          variant="standard"
+          fullWidth
+          placeholder="https://..."
+          helperText="Необязательное поле"
         />
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Button

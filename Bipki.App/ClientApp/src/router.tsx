@@ -107,7 +107,7 @@ export const createRouter = (basename: string) =>
       },
       {
         path: "*",
-        element: <Navigate to="/activity" />,
+        element: <Navigate to="/login" />,
       },
     ],
     { basename }

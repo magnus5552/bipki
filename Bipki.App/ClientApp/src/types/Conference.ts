@@ -10,6 +10,7 @@ export interface Conference {
   endDate: Date;
   address: string;
   description: string;
+  mapLink: string;
   registrationStatus: RegistrationStatus;
   participantsCount: number;
 }

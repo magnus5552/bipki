@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getChat, sendMessage, Message } from "api/chatApi";
+import { getChat, Message } from "api/chatApi";
 import { getUser } from "api/authApi";
 import SendIcon from "@mui/icons-material/Send";
 import { useState, useEffect } from "react";
