@@ -13,6 +13,7 @@ import {
 import { login } from '../../../api/authApi';
 import { LoginCredentials } from '../../../types/Auth';
 import { useUser } from '../../../hooks/useUser';
+import { Role } from '../../../types/User';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,13 +29,21 @@ export const LoginPage: React.FC = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      navigate('/activity');
+    onSuccess: (data) => {
+      if (data.role === Role.Admin) {
+        navigate('/admin/conferences');
+      } else {
+        navigate('/activity');
+      }
     },
   });
 
   if (user && !isLoading) {
-    navigate('/activity');
+    if (user.role === Role.Admin) {
+      navigate('/admin/conferences');
+    } else {
+      navigate('/activity');
+    }
     return null;
   }
 
@@ -49,7 +58,6 @@ export const LoginPage: React.FC = () => {
   };
 
   const goToRegister = () => {
-    // Сохраняем conferenceId при переходе на страницу регистрации
     const searchParams = new URLSearchParams(location.search);
     const conferenceId = searchParams.get('conferenceId');
     

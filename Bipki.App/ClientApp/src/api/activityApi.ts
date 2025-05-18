@@ -26,11 +26,6 @@ export async function getActivity(activityId: string): Promise<Activity> {
   return data;
 }
 
-export async function getActivities(): Promise<Activity[]> {
-  const response = await api.get<Activity[]>(`/activities`);
-  return response.data;
-}
-
 export const getConferenceActivities = async (conferenceId: string): Promise<Activity[]> => {
   const response = await api.get<Activity[]>(`/conferences/${conferenceId}/activities`);
   return response.data;
@@ -41,7 +36,7 @@ export const updateActivity = async (conferenceId: string, activityId: string, d
 };
 
 export const createActivity = async (conferenceId: string, data: CreateActivityRequest): Promise<void> => {
-  await api.put(`/conferences/${conferenceId}/activities`, data);
+  await api.post(`/conferences/${conferenceId}/activities`, data);
 };
 
 export const deleteActivity = async (conferenceId: string, activityId: string): Promise<void> => {

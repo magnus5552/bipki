@@ -10,9 +10,9 @@ public class CreateActivityRequest
 
     public string Description { get; set; } = null!;
 
-    public DateTime StartTime { get; set; }
+    public DateTime StartDateTime { get; set; }
 
-    public DateTime EndTime { get; set; }
+    public DateTime EndDateTime { get; set; }
 
     public ActivityType Type { get; set; }
     

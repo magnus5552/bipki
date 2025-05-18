@@ -64,7 +64,7 @@ public class ActivitiesController : ControllerBase
     [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> CreateActivity([FromBody] CreateActivityRequest request, [FromRoute] Guid conferenceId)
     {
-        if (request.StartTime < request.EndTime || request.TotalSeats < 0)
+        if (request.StartDateTime < request.EndDateTime || request.TotalSeats < 0)
             return BadRequest();
         
         var activity = new Database.Models.Activity
@@ -73,8 +73,8 @@ public class ActivitiesController : ControllerBase
             TypeLabel = request.TypeLabel,
             ConferenceId = conferenceId,
             Description = request.Description,
-            StartsAt = request.StartTime,
-            EndsAt = request.EndTime,
+            StartsAt = request.StartDateTime,
+            EndsAt = request.EndDateTime,
             Type = request.Type,
             TotalSeats = request.TotalSeats,
             Id = Guid.NewGuid()

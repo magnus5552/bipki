@@ -1,19 +1,23 @@
 import { Box } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { getActivities } from "api/activityApi";
 import { CollapsedActivityCard } from "components/activities/ActivityCard/CollapsedActivityCard";
 import { Loader } from "components/common/Loader/Loader";
 import { RegistrationStatus } from "types/Activity";
 import { useActivityRegistration } from "hooks/useActivityRegistration";
+import { useUser } from 'hooks/useUser';
+import { getConferenceActivities } from 'api/activityApi';
 
 export function RegisteredPage() {
+  const { user } = useUser();
+  const conferenceId = user?.conferenceId;
   const {
     data: activities,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["activities"],
-    queryFn: getActivities,
+    queryKey: ["activities", conferenceId],
+    queryFn: () => getConferenceActivities(conferenceId!),
+    enabled: !!conferenceId,
   });
 
   const { handleAction, isLoading: isActionLoading } = useActivityRegistration("");

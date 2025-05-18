@@ -21,18 +21,27 @@ export const AdminLoginPage: React.FC = () => {
     token: '',
   });
 
-  const { user } = useUser();
-
-  if (user?.role === Role.Admin) {
-    navigate('/admin/conferences');
-  }
+  const { user, isLoading } = useUser();
 
   const loginMutation = useMutation({
     mutationFn: loginAdmin,
-    onSuccess: () => {
-      navigate('/admin/conferences');
+    onSuccess: (data) => {
+      if (data.role === Role.Admin) {
+        navigate('/admin/conferences');
+      } else {
+        navigate('/activity');
+      }
     },
   });
+
+  if (user && !isLoading) {
+    if (user.role === Role.Admin) {
+      navigate('/admin/conferences');
+    } else {
+      navigate('/activity');
+    }
+    return null;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

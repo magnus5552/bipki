@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { AuthLayout } from '../../../components/auth/AuthLayout/AuthLayout';
@@ -12,11 +12,15 @@ import {
 import { register } from '../../../api/authApi';
 import { RegisterCredentials } from '../../../types/Auth';
 import { Box } from '@mui/material';
+import { useUser } from '../../../hooks/useUser';
+import { Role } from '../../../types/User';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { conferenceId } = useParams();
+
+  const { user, isLoading } = useUser();
 
   const [formData, setFormData] = useState<RegisterCredentials>({
     name: '',
@@ -28,15 +32,27 @@ export const RegisterPage: React.FC = () => {
 
   const registerMutation = useMutation({
     mutationFn: register,
-    onSuccess: () => {
-      // Сохраняем conferenceId при переходе на страницу логина
-      if (formData.conferenceId) {
-        navigate(`/login?conferenceId=${formData.conferenceId}`);
+    onSuccess: (data) => {
+      if (data.role === Role.Admin) {
+        navigate('/admin/conferences');
       } else {
-        navigate('/login');
+        if (formData.conferenceId) {
+          navigate(`/login?conferenceId=${formData.conferenceId}`);
+        } else {
+          navigate('/login');
+        }
       }
     },
   });
+
+  if (user && !isLoading) {
+    if (user.role === Role.Admin) {
+      navigate('/admin/conferences');
+    } else {
+      navigate('/activity');
+    }
+    return null;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
