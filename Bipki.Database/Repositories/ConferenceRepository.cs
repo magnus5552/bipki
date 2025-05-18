@@ -20,6 +20,11 @@ public class ConferenceRepository : IConferenceRepository
         return ConferenceMapper.Map(conference);
     }
 
+    public IEnumerable<Conference> GetAllConferences()
+    {
+        return dbContext.Conferences.Select(ConferenceMapper.Map).Where(x => x is not null)!;
+    }
+
     public async Task AddConference(Conference conference)
     {
         var entity = ConferenceMapper.Map(conference);
@@ -49,6 +54,18 @@ public class ConferenceRepository : IConferenceRepository
             }
         }
 
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var entity = await dbContext.Conferences.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity is null)
+        {
+            return;
+        }
+
+        dbContext.Conferences.Remove(entity);
         await dbContext.SaveChangesAsync();
     }
 }

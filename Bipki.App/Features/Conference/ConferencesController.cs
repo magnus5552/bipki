@@ -35,7 +35,28 @@ public class ConferencesController : ControllerBase
 
         return Ok(conference);
     }
+    
+    [Authorize(Roles = Roles.Admin)]
+    [HttpGet]
+    public async Task<IActionResult> GetConferences()
+    {
+        return Ok(conferenceRepository.GetAllConferences());
+    }
 
+    [Authorize(Roles = Roles.Admin)]
+    [HttpDelete("{conferenceId}")]
+    public async Task<IActionResult> DeleteConference([FromRoute] Guid conferenceId)
+    {
+        var conference = await conferenceRepository.GetById(conferenceId);
+        if (conference is null)
+        {
+            return NotFound();
+        }
+
+        await conferenceRepository.DeleteAsync(conferenceId);
+        return Ok();
+    }
+    
     [Authorize(Roles = Roles.Admin)]
     [HttpPatch("{conferenceId}")]
     public async Task<IActionResult> PatchConference([FromRoute] Guid conferenceId,
