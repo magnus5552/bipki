@@ -100,6 +100,11 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.Deleted)
                 .HasDefaultValue(false)
                 .HasColumnName("deleted");
+            
+            entity.HasOne(e => e.Chat)
+                .WithOne(e => e.Conference)
+                .HasForeignKey<Conference>(e => e.ChatId)
+                .HasConstraintName("activities_chat_id_fkey");
         });
 
         builder.Entity<Activity>(entity =>
@@ -133,6 +138,14 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 .HasDefaultValue(false)
                 .HasColumnName("deleted");
 
+            entity.Property(e => e.ChatId)
+                .HasColumnName("chat_id");
+
+            entity.HasOne(e => e.Chat)
+                .WithOne(e => e.Activity)
+                .HasForeignKey<Activity>(e => e.ChatId)
+                .HasConstraintName("activities_chat_id_fkey");
+            
             entity.HasIndex(e => e.StartsAt)
                 .HasDatabaseName("IX_activities_starts_at");
         });
@@ -253,6 +266,9 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.SenderId)
                 .HasColumnName("sender_id");
 
+            entity.Property(e => e.SenderName)
+                .HasColumnName("sender_name");
+            
             entity.HasOne(e => e.Chat)
                 .WithMany(e => e.Messages)
                 .HasForeignKey(e => e.ChatId)

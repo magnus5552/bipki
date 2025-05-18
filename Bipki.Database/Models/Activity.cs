@@ -16,5 +16,7 @@ public class Activity
     
     public ActivityType Type { get; set; }
     
+    public Guid ChatId { get; set; }
+    
     public string Recording { get; set; } = null!;
 }

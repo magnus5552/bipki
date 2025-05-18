@@ -28,7 +28,8 @@ public static class ConferenceMapper
                 Plan = conference.Plan,
                 StartDate = conference.StartDate,
                 EndDate = conference.EndDate,
-                Location = conference.Location
+                Location = conference.Location,
+                ChatId = conference.ChatId
             };
 
     public static DatabaseConference? Map(Conference? conference) =>
@@ -42,6 +43,7 @@ public static class ConferenceMapper
                 Plan = conference.Plan,
                 Location = conference.Location,
                 StartDate = conference.StartDate,
-                EndDate = conference.EndDate
+                EndDate = conference.EndDate,
+                ChatId = conference.ChatId
             };
 }

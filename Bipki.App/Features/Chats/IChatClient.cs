@@ -1,6 +1,8 @@
-﻿namespace Bipki.App.Features.Chats;
+﻿using Bipki.Database.Models;
+
+namespace Bipki.App.Features.Chats;
 
 public interface IChatClient
 {
-    Task ReceiveMessage();
+    Task ReceiveMessage(Message message);
 }

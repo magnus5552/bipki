@@ -16,10 +16,14 @@ public class Activity : Entity
     
     public int TotalParticipants { get; set; }
     
+    public Guid ChatId { get; set; }
+    
     // TODO communication channel
     public string Recording { get; set; } = null!;
-    
-    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; }
-    
-    public virtual IEnumerable<WaitListEntry> WaitList { get; set; }
+
+    public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
+
+    public virtual Chat Chat { get; set; } = null!;
+
+    public virtual IEnumerable<WaitListEntry> WaitList { get; set; } = null!;
 }

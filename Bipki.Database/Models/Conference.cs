@@ -17,4 +17,6 @@ public class Conference
     public DateTime EndDate { get; set; }
 
     public string Location { get; set; } = null!;
+    
+    public Guid ChatId { get; set; }
 }

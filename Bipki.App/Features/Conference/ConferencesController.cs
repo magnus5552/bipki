@@ -1,4 +1,5 @@
 ﻿using Bipki.App.Features.Conference.Requests;
+using Bipki.Database.Models;
 using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -13,13 +14,16 @@ public class ConferencesController : ControllerBase
 {
     private readonly IConferenceRepository conferenceRepository;
     private readonly UserManager<User> userManager;
+    private readonly IChatRepository chatRepository;
 
-    public ConferencesController(IConferenceRepository conferenceRepository, UserManager<User> userManager)
+    public ConferencesController(IConferenceRepository conferenceRepository, UserManager<User> userManager,
+        IChatRepository chatRepository)
     {
         this.conferenceRepository = conferenceRepository;
         this.userManager = userManager;
+        this.chatRepository = chatRepository;
     }
-    
+
     [HttpGet("{conferenceId:guid}")]
     public async Task<IActionResult> GetConference([FromRoute] Guid conferenceId)
     {
@@ -33,7 +37,7 @@ public class ConferencesController : ControllerBase
     }
 
     [Authorize(Roles = Roles.Admin)]
-    [HttpPatch("conferences/{conferenceId}")]
+    [HttpPatch("{conferenceId}")]
     public async Task<IActionResult> PatchConference([FromRoute] Guid conferenceId,
         [FromBody] PatchConferenceRequest patchRequest)
     {
@@ -54,9 +58,9 @@ public class ConferencesController : ControllerBase
 
         return NoContent();
     }
-    
+
     [Authorize(Roles = Roles.Admin)]
-    [HttpPut("conferences")]
+    [HttpPut]
     public async Task<IActionResult> CreateConference([FromBody] CreateConferenceRequest createRequest)
     {
         var conference = new Database.Models.Conference
@@ -67,14 +71,22 @@ public class ConferencesController : ControllerBase
             Description = createRequest.Description,
             Location = createRequest.Location,
             StartDate = createRequest.StartDate,
-            EndDate = createRequest.EndDate
+            EndDate = createRequest.EndDate,
+            ChatId = Guid.NewGuid()
         };
-
+        
         await conferenceRepository.AddConference(conference);
-
+        await chatRepository.Add(new Chat
+        {
+            Title = conference.Name,
+            Type = ChatType.Conference,
+            Id = conference.ChatId
+        });
+        
+        
         return Created($"admin/conferences/{conference.Id}", conference.Id);
     }
-    
+
     [Authorize]
     [HttpGet("{conferenceId:guid}/qrcode")]
     public IActionResult GetConferencEntranceQr([FromRoute] Guid conferenceId)
@@ -83,8 +95,10 @@ public class ConferencesController : ControllerBase
             return Unauthorized();
 
         // TODO you see the problem, I believe
-        var qrCodeData = QRCodeGenerator.GenerateQrCode(new PayloadGenerator.Url($"http://localhost/api/admin/checkInGuest/{userId}"));
-        
+        var qrCodeData =
+            QRCodeGenerator.GenerateQrCode(
+                new PayloadGenerator.Url($"http://localhost/api/admin/checkInGuest/{userId}"));
+
         return Ok(new PngByteQRCode(qrCodeData).GetGraphic(10));
     }
 }

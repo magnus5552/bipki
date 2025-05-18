@@ -9,4 +9,8 @@ public class Chat : Entity
     public ChatType Type { get; set; }
     
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+
+    public virtual Activity Activity { get; set; } = null!;
+
+    public virtual Conference Conference { get; set; } = null!;
 }
