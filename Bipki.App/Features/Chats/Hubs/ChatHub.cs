@@ -208,6 +208,16 @@ public class ChatHub : Hub<IChatClient>
         await Clients.Group(chat.Id.ToString()).PollUpdated(pollModel);
     }
 
+    public async Task EnterChat(Guid chatId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
+    }
+
+    public async Task ExitChat(Guid chatId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId.ToString());
+    }
+    
     private async Task<bool> IsChatAllowedForUser(Chat chat, User user)
     {
         if (await userManager.IsInRoleAsync(user, Roles.Admin) ||

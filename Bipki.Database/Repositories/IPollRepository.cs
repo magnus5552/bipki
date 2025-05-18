@@ -7,4 +7,6 @@ public interface IPollRepository
     Task AddPollAsync(Poll poll);
 
     Task<Poll?> GetByIdAsync(Guid id);
+
+    IEnumerable<Poll> GetByChatId(Guid id);
 }

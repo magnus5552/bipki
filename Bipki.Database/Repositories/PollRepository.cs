@@ -30,4 +30,13 @@ public class PollRepository : IPollRepository
         var entity = await dbContext.Polls.FirstOrDefaultAsync(x => x.Id == id);
         return PollMapper.Map(entity);
     }
+
+    public IEnumerable<Poll> GetByChatId(Guid id)
+    {
+        return dbContext.Polls
+            .Where(x => x.ChatId == id)
+            .AsEnumerable()
+            .Select(PollMapper.Map)
+            .Where(x => x is not null)!;
+    }
 }
