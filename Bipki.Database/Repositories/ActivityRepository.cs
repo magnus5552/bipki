@@ -19,6 +19,11 @@ public class ActivityRepository : IActivityRepository
         return ActivityMapper.Map(dbContext.Activities.FirstOrDefault(a => a.Id == id));
     }
 
+    public IEnumerable<Activity> GetAllInConference(Guid conferenceId)
+    {
+        return dbContext.Activities.Where(a => a.ConferenceId == conferenceId).Select(a => ActivityMapper.Map(a)!).ToList();
+    }
+
     public UserActivity? GetUserActivity(Guid userId, Guid activityId)
     {
         var activity = dbContext.Activities.FirstOrDefault(a => a.Id == activityId);

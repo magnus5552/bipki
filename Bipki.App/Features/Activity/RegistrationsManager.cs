@@ -66,6 +66,9 @@ public class RegistrationsManager
     public async Task<Guid?> EnterWaitList(ActivityDto activity, Guid userId)
     {
         var dbActivity = dbContext.Activities.FirstOrDefault(a => a.Id == activity.Id)!;
+        if (dbContext.WaitListEntries.FirstOrDefault(w =>
+                w.UserId == userId && w.ActivityId == activity.Id) is not null)
+            return null;
 
         var transaction = await dbContext.Database.BeginTransactionAsync();
 

@@ -35,7 +35,23 @@ public class ActivitiesController : ControllerBase
     {
         return Ok(activityRepository.GetById(activityId));
     }
+
+    [HttpGet]
+    public IActionResult GetAllInConference([FromRoute] Guid conferenceId)
+    {
+        return Ok(activityRepository.GetAllInConference(conferenceId));
+    }
     
+    [HttpGet("extended")]
+    [Authorize]
+    public IActionResult GetAllForUser([FromRoute] Guid conferenceId)
+    {
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        return Ok(activityRepository.GetAllInConference(conferenceId)
+            .Select(a => activityRepository.GetUserActivity(userId, a.Id)).ToArray());
+    }
+
     [HttpGet("{activityId:guid}/extended")]
     [Authorize]
     public IActionResult GetUserActivity([FromRoute] Guid activityId)
@@ -122,10 +138,10 @@ public class ActivitiesController : ControllerBase
 
         var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
 
-        var registrationId = await registrationsManager.Register(activity, userId);
-        if (registrationId is null)
+        var registrationStatus = await registrationsManager.RegisterOrWaitlist(activity, userId);
+        if (registrationStatus is RegistrationResult.Unknown)
             return Conflict();
-        return Ok(registrationId);
+        return Ok(registrationStatus);
     }
 
     [HttpGet("{activityId:guid}/unregister")]
@@ -155,33 +171,5 @@ public class ActivitiesController : ControllerBase
         if (await registrationsManager.VerifyRegistration(activityId, userId))
             return Ok();
         return Conflict();
-    }
-    
-    [HttpGet("{activityId:guid}/enterWaitList")]
-    [Authorize]
-    public async Task<IActionResult> EnterWaitList([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
-    {
-        var activity = activityRepository.GetById(activityId);
-        if (activity is null || activity.ConferenceId != conferenceId)
-            return BadRequest();
-        
-        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
-
-        var id = await registrationsManager.EnterWaitList(activity, userId);
-        return id is null ? Conflict() : Ok();
-    }
-    
-    [HttpGet("{activityId:guid}/exitWaitList")]
-    [Authorize]
-    public async Task<IActionResult> ExitWaitList([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
-    {
-        var activity = activityRepository.GetById(activityId);
-        if (activity is null || activity.ConferenceId != conferenceId)
-            return BadRequest();
-        
-        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
-
-        await registrationsManager.ExitWaitList(activityId, userId);
-        return Ok();
     }
 }
