@@ -24,7 +24,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
   useEffect(() => {
     if (connection.current) return;
-    if (!user?.isAuthenticated) return;
+    if (!user) return;
 
     const hubConnection = new signalR.HubConnectionBuilder()
       .withUrl("/api/chats-hub")
@@ -45,7 +45,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     return () => {
       hubConnection.stop();
     };
-  }, [user?.isAuthenticated]);
+  }, [user]);
 
   return (
     <ChatContext.Provider value={{ connection: connection.current }}>

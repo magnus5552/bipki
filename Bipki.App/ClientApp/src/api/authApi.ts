@@ -7,7 +7,7 @@ import {
 } from "types/Auth";
 
 export async function getUser(): Promise<User> {
-  const { data } = await api.get<User>("/user");
+  const { data } = await api.get<User>("/auth/login");
   return data;
 }
 

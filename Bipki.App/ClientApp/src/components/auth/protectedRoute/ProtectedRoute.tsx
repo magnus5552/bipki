@@ -21,7 +21,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole }) 
         return <Loader />;
     }
 
-    if (error || !user?.isAuthenticated || user.role !== requiredRole) {
+    if (error || !user || user.role !== requiredRole) {
         return <Navigate to="/login" replace />;
     }
 

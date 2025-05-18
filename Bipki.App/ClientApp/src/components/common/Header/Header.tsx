@@ -65,8 +65,14 @@ export const Header = () => {
     navigate("/admin/conferences");
   };
 
-  if (isLoading || !user?.isAuthenticated) {
-    return <HeaderContainer />;
+  if (isLoading || !user) {
+    return (
+      <HeaderContainer>
+        <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
+          <Typography variant="h6">Bipki</Typography>
+        </Box>
+      </HeaderContainer>
+    );
   }
 
   return (
@@ -84,7 +90,7 @@ export const Header = () => {
           </IconButtonStyled>
         )}
       </Box>
-      {user.isAuthenticated && chatId && (
+      {user && chatId && (
         <ChatButton
           onClick={() =>
             navigate(

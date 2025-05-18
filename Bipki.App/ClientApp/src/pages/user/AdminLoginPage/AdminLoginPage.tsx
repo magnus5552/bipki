@@ -12,6 +12,8 @@ import {
 } from '../../../components/auth/AuthComponents/AuthComponents';
 import { loginAdmin } from '../../../api/authApi';
 import { AdminLoginCredentials } from '../../../types/Auth';
+import { useUser } from 'hooks/useUser';
+import { Role } from 'types/User';
 
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,10 +21,16 @@ export const AdminLoginPage: React.FC = () => {
     token: '',
   });
 
+  const { user } = useUser();
+
+  if (user?.role === Role.Admin) {
+    navigate('/admin/conferences');
+  }
+
   const loginMutation = useMutation({
     mutationFn: loginAdmin,
     onSuccess: () => {
-      navigate('/admin');
+      navigate('/admin/conferences');
     },
   });
 

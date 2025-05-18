@@ -9,5 +9,4 @@ export interface User {
     telegram: string;
     role: Role;
     conferenceId: string | null;
-    isAuthenticated: boolean;
 }
