@@ -15,7 +15,6 @@ public class AuthController : ControllerBase
     private readonly AuthorizationOptions authOptions;
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
-    private readonly IConferenceRepository conferenceRepository;
     private readonly IUserRepository userRepository;
 
     public AuthController(
@@ -28,16 +27,13 @@ public class AuthController : ControllerBase
         this.authOptions = authOptions.Value;
         this.userManager = userManager;
         this.signInManager = signInManager;
-        this.conferenceRepository = conferenceRepository;
         this.userRepository = userRepository;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserAuthRequest request)
+    public async Task<IActionResult> Register([FromBody] UserRegisterRequest request)
     {
         var existingUser = userRepository.GetUserByCredentials(
-            request.Name,
-            request.Surname,
             request.Telegram,
             request.ConferenceId);
         
@@ -48,7 +44,7 @@ public class AuthController : ControllerBase
 
         var user = new User
         {
-            UserName = $"{request.Name} {request.Surname} {request.Telegram}",
+            UserName = Guid.NewGuid().ToString(),
             Name = request.Name,
             Surname = request.Surname,
             Telegram = request.Telegram,
@@ -70,11 +66,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] UserAuthRequest request)
+    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         var user = userRepository.GetUserByCredentials(
-            request.Name,
-            request.Surname,
             request.Telegram,
             request.ConferenceId);
         
@@ -96,7 +90,7 @@ public class AuthController : ControllerBase
         var model = new UserModel
         {
             Id = user.Id,
-            UserName = user.Name +" " + user.Surname,
+            UserName = Guid.NewGuid().ToString(),
             Telegram = user.Telegram,
             Role = Roles.User,
             ConferenceId = user.ConferenceId
@@ -126,7 +120,7 @@ public class AuthController : ControllerBase
         var model = new UserModel
         {
             Id = user.Id,
-            UserName = user.Name + "  " + user.Surname,
+            UserName = Guid.NewGuid().ToString(),
             Telegram = user.Telegram,
             Role = Roles.Admin,
             ConferenceId = user.ConferenceId
@@ -144,12 +138,14 @@ public class AuthController : ControllerBase
         {
             return NotFound();
         }
+
+        var isAdmin = await userManager.IsInRoleAsync(user, Roles.Admin);
         var model = new UserModel
         {
             Id = user.Id,
-            UserName = user.Name + "  " + user.Surname,
+            UserName = Guid.NewGuid().ToString(),
             Telegram = user.Telegram,
-            Role = Roles.Admin,
+            Role = isAdmin ? Roles.Admin: Roles.User,
             ConferenceId = user.ConferenceId
         };
         return Ok(model);

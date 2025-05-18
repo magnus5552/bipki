@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate('/');
+      navigate('/activity');
     },
   });
 

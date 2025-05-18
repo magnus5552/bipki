@@ -1,6 +1,6 @@
 namespace Bipki.App.Features.Auth;
 
-public class UserAuthRequest
+public class UserRegisterRequest
 {
     public string Name { get; set; } = null!;
     
