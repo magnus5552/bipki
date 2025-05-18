@@ -32,20 +32,20 @@ export async function getActivities(): Promise<Activity[]> {
 }
 
 export const getConferenceActivities = async (conferenceId: string): Promise<Activity[]> => {
-  const response = await api.get<Activity[]>(`/admin/conferences/${conferenceId}/activities`);
+  const response = await api.get<Activity[]>(`/conferences/${conferenceId}/activities`);
   return response.data;
 };
 
 export const updateActivity = async (conferenceId: string, activityId: string, data: PatchActivityRequest): Promise<void> => {
-  await api.patch(`/admin/conferences/${conferenceId}/activities/${activityId}`, data);
+  await api.patch(`/conferences/${conferenceId}/activities/${activityId}`, data);
 };
 
 export const createActivity = async (conferenceId: string, data: CreateActivityRequest): Promise<void> => {
-  await api.put(`/admin/conferences/${conferenceId}/activities`, data);
+  await api.put(`/conferences/${conferenceId}/activities`, data);
 };
 
 export const deleteActivity = async (conferenceId: string, activityId: string): Promise<void> => {
-  await api.delete(`/admin/conferences/${conferenceId}/activities/${activityId}`);
+  await api.delete(`/conferences/${conferenceId}/activities/${activityId}`);
 };
 
 export const registerForActivity = async (activityId: string): Promise<void> => {
