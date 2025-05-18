@@ -116,10 +116,10 @@ public class ConferencesController : ControllerBase
         if (!Guid.TryParse(userManager.GetUserId(User), out var userId))
             return Unauthorized();
 
-        // TODO you see the problem, I believe
+        var hostName = HttpContext.Request.Host.Value;
         var qrCodeData =
             QRCodeGenerator.GenerateQrCode(
-                new PayloadGenerator.Url($"http://localhost/api/admin/checkInGuest/{userId}"));
+                new PayloadGenerator.Url($"http://{hostName}/admin/userStatus"));
 
         return Ok(new PngByteQRCode(qrCodeData).GetGraphic(10));
     }
