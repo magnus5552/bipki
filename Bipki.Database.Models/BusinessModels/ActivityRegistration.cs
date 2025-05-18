@@ -12,8 +12,8 @@ public class ActivityRegistration : Entity
     public DateTime RegisteredAt { get; set; }
     
     public bool Verified { get; set; }
-    
-    public bool NotificationEnabled { get; set; }
+
+    public bool NotificationEnabled { get; set; } = true;
     
     public virtual Activity Activity { get; set; } = null!;
     

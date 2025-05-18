@@ -9,6 +9,8 @@ public class Activity
     public Guid ConferenceId { get; set; }
     
     public string Name { get; set; } = null!;
+
+    public string TypeLabel { get; set; } = null!;
     
     public string Description { get; set; } = null!;
     

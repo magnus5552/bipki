@@ -84,7 +84,7 @@ public class ConferencesController : ControllerBase
         });
         
         
-        return Created($"admin/conferences/{conference.Id}", conference.Id);
+        return Created($"conferences/{conference.Id}", conference.Id);
     }
 
     [Authorize]

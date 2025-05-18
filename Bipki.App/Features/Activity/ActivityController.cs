@@ -37,11 +37,7 @@ public class ActivitiesController : ControllerBase
     [Authorize]
     public IActionResult GetUserActivity([FromRoute] Guid activityId)
     {
-        if (!Guid.TryParse(userManager.GetUserId(User), out var userId))
-        {
-            return Unauthorized();
-        }
-
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
         return Ok(activityRepository.GetUserActivity(userId, activityId));
     }
     
@@ -55,6 +51,7 @@ public class ActivitiesController : ControllerBase
         var activity = new Database.Models.Activity
         {
             Name = request.Name,
+            TypeLabel = request.TypeLabel,
             ConferenceId = conferenceId,
             Description = request.Description,
             StartsAt = request.StartTime,
@@ -73,7 +70,7 @@ public class ActivitiesController : ControllerBase
             Id = activity.ChatId
         });
         
-        return Created($"activities/{activity.Id}", activity);
+        return Created($"conferences/{conferenceId}/activities/{activity.Id}", activity);
     }
 
     [HttpPatch("{activityId:guid}")]
@@ -85,20 +82,19 @@ public class ActivitiesController : ControllerBase
         if (activity is null || activity.ConferenceId != conferenceId)
             return NotFound();
         
-        if (request.Name is not null)
-            activity.Name = request.Name;
-        if (request.Description is not null)
-            activity.Description = request.Description;
-        if (request.StartTime is not null)
-            activity.StartsAt = request.StartTime.Value;
-        if (request.EndTime is not null)
-            activity.EndsAt = request.EndTime.Value;
-        if (request.Type is not null)
-            activity.Type = request.Type.Value; // TODO whatever comes with changing the type
-        if (request.Recording is not null)
-            activity.Recording = request.Recording;
+        activity.Name = request.Name ?? activity.Name;
+        activity.Description = request.Description ?? activity.Description;
+        activity.TypeLabel = request.TypeLabl ?? activity.TypeLabel;
+        activity.StartsAt = request.StartTime ?? activity.StartsAt;
+        activity.EndsAt = request.EndTime ?? activity.EndsAt;
+        activity.Type = request.Type ?? activity.Type; // TODO whatever comes with changing the type
+        activity.Recording = request.Recording ?? activity.Recording;
         if (request.TotalSeats is not null)
-            activity.TotalSeats = request.TotalSeats.Value; // TODO manslaughter
+        {
+            if (activity.TotalSeats > request.TotalSeats)
+                await registrationsManager.Shrink(activity.Id);
+            activity.TotalSeats = request.TotalSeats.Value;
+        }
 
         await activityRepository.ChangeAsync(activity);
         return NoContent();
@@ -106,32 +102,47 @@ public class ActivitiesController : ControllerBase
 
     [HttpGet("{activityId:guid}/register")]
     [Authorize]
-    public IActionResult Register([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> Register([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
 
-        throw new NotImplementedException();
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        var registrationId = await registrationsManager.Register(activity, userId);
+        if (registrationId is null)
+            return Conflict();
+        return Ok(registrationId);
     }
 
     [HttpGet("{activityId:guid}/unregister")]
     [Authorize]
-    public IActionResult Unregister([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> Unregister([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
+        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        if (await registrationsManager.Unregister(activity, userId))
+            return Ok();
+        return Conflict();
     }
 
     [HttpGet("{activityId:guid}/confirmRegistration")]
     [Authorize]
-    public IActionResult ConfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> ConfirmRegistration([FromRoute] Guid activityId, [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return BadRequest();
         
-        
+        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+
+        if (await registrationsManager.VerifyRegistration(activityId, userId))
+            return Ok();
+        return Conflict();
     }
 }

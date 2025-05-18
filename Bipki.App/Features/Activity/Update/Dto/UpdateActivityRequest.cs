@@ -6,6 +6,8 @@ public class UpdateActivityRequest
 {
     public string? Name { get; set; }
     
+    public string? TypeLabl { get; set; }
+    
     public string? Description { get; set; }
     
     public DateTime? StartTime { get; set; }
