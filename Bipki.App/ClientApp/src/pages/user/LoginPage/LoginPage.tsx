@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { Box } from '@mui/material';
 import { AuthLayout } from '../../../components/auth/AuthLayout/AuthLayout';
@@ -16,26 +16,17 @@ import { LoginCredentials } from '../../../types/Auth';
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { conferenceId } = useParams();
   const [formData, setFormData] = useState<LoginCredentials>({
     telegram: '',
     password: '',
-    conferenceId: '',
+    conferenceId: conferenceId ?? '',
   });
-
-  useEffect(() => {
-    // Получаем conferenceId из query-параметров
-    const searchParams = new URLSearchParams(location.search);
-    const conferenceId = searchParams.get('conferenceId');
-    
-    if (conferenceId) {
-      setFormData(prev => ({ ...prev, conferenceId }));
-    }
-  }, [location]);
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate('/activity');
+      navigate('/activities');
     },
   });
 
@@ -82,6 +73,14 @@ export const LoginPage: React.FC = () => {
             name="password"
             type="password"
             value={formData.password}
+            onChange={handleChange}
+            variant="standard"
+            fullWidth
+          />
+          <StyledTextField
+            label="ID конференции"
+            name="conferenceId"
+            value={formData.conferenceId}
             onChange={handleChange}
             variant="standard"
             fullWidth

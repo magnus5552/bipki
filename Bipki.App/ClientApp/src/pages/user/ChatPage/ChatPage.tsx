@@ -168,11 +168,11 @@ export const ChatPage = () => {
   }, [signalR, chatId, queryClient]);
 
   const sendMessageMutation = useMutation({
-    mutationFn: async (text: string) => {
+    mutationFn: async (message: string) => {
       if (!signalR) throw new Error("SignalR not connected");
       await signalR.send("SendMessage", {
         chatId,
-        text,
+        text: message,
       });
     },
     onSuccess: () => {
@@ -185,8 +185,10 @@ export const ChatPage = () => {
     
     signalR.send("CreatePoll", {
       chatId,
-      title: pollTitle.trim(),
-      options: pollOptions.map(opt => opt.trim()),
+      poll: {
+        title: pollTitle.trim(),
+        options: pollOptions.map(opt => ({ text: opt.trim()})),
+      },
     });
 
     setIsPollDialogOpen(false);
