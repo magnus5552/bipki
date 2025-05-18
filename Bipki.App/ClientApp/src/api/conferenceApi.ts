@@ -8,7 +8,7 @@ export interface PatchConferenceRequest {
   endDate?: Date;
   location?: string;
   description?: string;
-  mapLink?: string;
+  plan?: string;
 }
 
 export interface CreateConferenceRequest {
@@ -17,7 +17,7 @@ export interface CreateConferenceRequest {
   endDate: Date;
   location: string;
   description: string;
-  mapLink?: string;
+  plan?: string;
 }
 
 export const getConferences = async (): Promise<Conference[]> => {
