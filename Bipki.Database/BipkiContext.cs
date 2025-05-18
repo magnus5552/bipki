@@ -24,6 +24,12 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<Chat> Chats { get; set; }
     
     public virtual DbSet<Message> Messages { get; set; }
+    
+    public virtual DbSet<Poll> Polls { get; set; }
+    
+    public virtual DbSet<PollOption> PollOptions { get; set; }
+    
+    public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -279,6 +285,67 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 .HasConstraintName("messages_chat_id_fkey");
 
             entity.HasIndex(e => e.ChatId);
+        });
+
+        builder.Entity<Poll>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.ToTable("polls");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.ChatId).HasColumnName("chat_id");
+
+            entity.Property(e => e.Title).HasColumnName("title");
+
+            entity.Property(e => e.TimeStamp).HasColumnName("timestamp");
+
+            entity.HasOne(e => e.Chat)
+                .WithMany(e => e.Polls)
+                .HasForeignKey(e => e.ChatId)
+                .HasConstraintName("polls_chat_id_fkey");
+        });
+
+        builder.Entity<PollOption>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.ToTable("poll_options");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.Text).HasColumnName("text");
+
+            entity.Property(e => e.PollId).HasColumnName("poll_id");
+
+            entity.HasOne(e => e.Poll)
+                .WithMany(e => e.PollOptions)
+                .HasForeignKey(e => e.PollId)
+                .HasConstraintName("poll_options_poll_id_fkey");
+        });
+
+        builder.Entity<Vote>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.ToTable("votes");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.Property(e => e.PollOptionId).HasColumnName("poll_option_id");
+
+            entity.HasOne(e => e.User)
+                .WithMany(e => e.Votes)
+                .HasForeignKey(e => e.UserId)
+                .HasConstraintName("votes_user_id_fkey");
+
+            entity.HasOne(e => e.PollOption)
+                .WithMany(e => e.Votes)
+                .HasForeignKey(e => e.PollOptionId)
+                .HasConstraintName("vote_poll_option_id_fkey");
         });
     }
     

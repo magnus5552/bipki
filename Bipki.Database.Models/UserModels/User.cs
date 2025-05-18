@@ -14,6 +14,8 @@ public class User: IdentityUser<Guid>
     public Guid? ConferenceId { get; set; }
     
     public bool CheckedIn { get; set; }
+
+    public virtual ICollection<Vote> Votes { get; set; } = new List<Vote>();
     
     public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
 

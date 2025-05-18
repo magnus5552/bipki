@@ -10,6 +10,8 @@ public class Chat : Entity
     
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 
+    public virtual ICollection<Poll> Polls { get; set; } = new List<Poll>();
+
     public virtual Activity Activity { get; set; } = null!;
 
     public virtual Conference Conference { get; set; } = null!;
