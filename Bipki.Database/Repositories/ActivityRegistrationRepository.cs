@@ -23,4 +23,23 @@ public class ActivityRegistrationRepository : IActivityRegistrationRepository
 
         return ActivityRegistrationMapper.Map(entity);
     }
+
+    public async Task<IEnumerable<ActivityRegistration>> GetAllUnverified()
+    {
+        var unverifiedRegistrations =
+            dbContext.ActivityRegistrations.Where(r => !r.Verified);
+        return unverifiedRegistrations.Select(r => ActivityRegistrationMapper.Map(r)!).ToList();
+    }
+    
+    public async Task<IEnumerable<ActivityRegistration>> GetAllInActivity(Guid activityId)
+    {
+        var activityRegistrations = dbContext.ActivityRegistrations.Where(r => r.ActivityId == activityId);
+        return activityRegistrations.Select(r => ActivityRegistrationMapper.Map(r)!).ToList();
+    }
+
+    public async Task<IEnumerable<ActivityRegistration>> GetAllInUser(Guid userId)
+    {
+        var activityRegistration = dbContext.ActivityRegistrations.Where(r => r.UserId == userId);
+        return activityRegistration.Select(r => ActivityRegistrationMapper.Map(r)!).ToList();
+    }
 }

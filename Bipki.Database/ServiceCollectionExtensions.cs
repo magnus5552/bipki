@@ -17,5 +17,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<IMessageRepository, MessageRepository>()
             .AddScoped<IPollOptionRepository, PollOptionRepository>()
             .AddScoped<IPollRepository, PollRepository>()
-            .AddScoped<IVoteRepository, VoteRepository>();
+            .AddScoped<IVoteRepository, VoteRepository>()
+            .AddScoped<INotificationSubscriptionRepository, NotificationSubscriptionRepository>();
 }

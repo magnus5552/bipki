@@ -6,6 +6,7 @@ public interface IUserRepository
 {
     User? GetUser(Guid id);
     User? GetUserByCredentials(string telegram, Guid? conferenceId);
+    IEnumerable<User> GetAllInConference(Guid conferenceId);
     bool TrySetCheckedIn(Guid userId);
     User? GetByTelegram(string telegram);
 }

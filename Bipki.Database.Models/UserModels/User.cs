@@ -20,4 +20,6 @@ public class User: IdentityUser<Guid>
     public virtual IEnumerable<ActivityRegistration> ActivityRegistrations { get; set; } = null!;
 
     public virtual IEnumerable<WaitListEntry> WaitLists { get; set; } = null!;
+
+    public virtual IEnumerable<NotificationSubscription> NotificationSubscriptions { get; set; } = null!;
 }

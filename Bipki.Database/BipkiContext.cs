@@ -31,6 +31,8 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<PollOption> PollOptions { get; set; }
     
     public virtual DbSet<Vote> Votes { get; set; }
+    
+    public virtual DbSet<NotificationSubscription> NotificationSubscriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -350,6 +352,27 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
                 .WithMany(e => e.Votes)
                 .HasForeignKey(e => e.PollOptionId)
                 .HasConstraintName("vote_poll_option_id_fkey");
+        });
+
+        builder.Entity<NotificationSubscription>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.ToTable("notification_subscriptions");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.SubscribentId).HasColumnName("subscribent_id");
+
+            entity.Property(e => e.PushEndpoint).HasColumnName("endpoint");
+            
+            entity.Property(e => e.PushAuth).HasColumnName("auth");
+            
+            entity.Property(e => e.PushP256DH).HasColumnName("p256dh");
+
+            entity.HasOne(e => e.Subscribent).WithMany(e => e.NotificationSubscriptions)
+                .HasForeignKey(e => e.SubscribentId)
+                .HasConstraintName("notification_subscription_subscribent_id_fkey");
         });
     }
     

@@ -11,6 +11,7 @@ public static class NotificationSubscriptionMapper
             : new NotificationSubscription
             {
                 Id = sub.Id,
+                SubscribentId = sub.SubscribentId,
                 PushEndpoint = sub.PushEndpoint,
                 PushAuth = sub.PushAuth,
                 PushP256DH = sub.PushP256DH
@@ -22,6 +23,7 @@ public static class NotificationSubscriptionMapper
             : new DbSubscription
             {
                 Id = sub.Id,
+                SubscribentId = sub.SubscribentId,
                 PushEndpoint = sub.PushEndpoint,
                 PushAuth = sub.PushAuth,
                 PushP256DH = sub.PushP256DH

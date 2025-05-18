@@ -20,6 +20,11 @@ public class UserRepository : IUserRepository
     {
         return dbContext.Users.FirstOrDefault(x => x.Telegram == telegram);
     }
+    
+    public IEnumerable<User> GetAllInConference(Guid conferenceId)
+    {
+        return dbContext.Users.Where(u => u.ConferenceId == conferenceId).ToList();
+    }
 
     public User? GetUserByCredentials(string telegram, Guid? conferenceId)
     {

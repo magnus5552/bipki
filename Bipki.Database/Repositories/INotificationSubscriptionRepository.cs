@@ -4,5 +4,6 @@ namespace Bipki.Database.Repositories;
 
 public interface INotificationSubscriptionRepository
 {
-    Guid? Create(NotificationSubscription sub);
+    Task<Guid?> CreateAsync(NotificationSubscription sub);
+    IEnumerable<NotificationSubscription> GetRelevant(Guid userId);
 }

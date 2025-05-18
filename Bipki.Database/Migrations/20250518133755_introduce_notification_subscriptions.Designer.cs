@@ -3,6 +3,7 @@ using System;
 using Bipki.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bipki.Database.Migrations
 {
     [DbContext(typeof(BipkiContext))]
-    partial class BipkiContextModelSnapshot : ModelSnapshot
+    [Migration("20250518133755_introduce_notification_subscriptions")]
+    partial class introduce_notification_subscriptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -565,13 +568,12 @@ namespace Bipki.Database.Migrations
                             Id = new Guid("7e0ca8d7-841b-4f0d-92e8-64ed6dd9805a"),
                             AccessFailedCount = 0,
                             CheckedIn = false,
-                            ConcurrencyStamp = "ec888857-3fbc-4939-bab2-c127a2bc59a2",
+                            ConcurrencyStamp = "a682055c-9897-46d3-86be-0d84094260ff",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "admin",
                             NormalizedUserName = "ADMIN",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "oikamsda",
                             Surname = "admin",
                             Telegram = "adminTg",
                             TwoFactorEnabled = false,

@@ -47,6 +47,8 @@ public class RegistrationsManager
 
         dbContext.ActivityRegistrations.Remove(registration);
         await dbContext.SaveChangesAsync();
+
+        await TopWaiterToRegister(activityId);
     }
     
     public async Task<bool> VerifyRegistration(Guid activityId , Guid userId)
@@ -92,15 +94,21 @@ public class RegistrationsManager
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<Guid?> RegisterFromWaitList(Guid waitListEntryId)
+    public async Task TopWaiterToRegister(Guid activityId)
     {
-        var waitListEntry = dbContext.WaitListEntries.FirstOrDefault(w => w.Id == waitListEntryId);
-        if (waitListEntry is null)
-            return null;
+        var entry = dbContext.WaitListEntries.Where(e => e.ActivityId == activityId)
+            .OrderBy(e => e.WaitsSince).FirstOrDefault();
+        if (entry is null)
+            return;
 
+        await RegisterFromWaitList(entry);
+    }
+    
+    private async Task RegisterFromWaitList(WaitListEntry waitListEntry)
+    {
         var activity = dbContext.Activities.FirstOrDefault(r => r.Id == waitListEntry.ActivityId);
         if (activity is null)
-            return null;
+            return;
 
         var newRegistration = new ActivityRegistration
         {
@@ -117,7 +125,7 @@ public class RegistrationsManager
         if (registrations.Count() == activity.TotalParticipants)
         {
             await transaction.RollbackAsync();
-            return null;
+            return;
         }
 
         await dbContext.ActivityRegistrations.AddAsync(newRegistration);
@@ -125,20 +133,18 @@ public class RegistrationsManager
         await transaction.CommitAsync();
         
         // TODO send confirmation notification
-
-        return newRegistration.Id;
     }
 
-    public async Task<bool> DeleteUnverifiedRegistration(Guid registrationId)
+    public async Task DeleteUnverifiedRegistration(Guid registrationId)
     {
         var registration = dbContext.ActivityRegistrations.FirstOrDefault(r => r.Id == registrationId);
-        if (registration is null || registration.Verified)
-            return false;
-        
+        if (registration is null || registration.Verified) return;
+
+        var activityId = registration.ActivityId;
         dbContext.ActivityRegistrations.Remove(registration);
         await dbContext.SaveChangesAsync();
 
-        return true;
+        await TopWaiterToRegister(activityId);
     }
     
     public async Task Shrink(Guid activityId)

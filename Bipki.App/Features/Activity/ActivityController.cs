@@ -1,5 +1,6 @@
 ﻿using Bipki.App.Features.Activity.Create.Dto;
 using Bipki.App.Features.Activity.Update.Dto;
+using Bipki.App.Features.Notifications;
 using Bipki.Database.Models;
 using Bipki.Database.Models.UserModels;
 using Bipki.Database.Repositories;
@@ -15,15 +16,17 @@ public class ActivitiesController : ControllerBase
     private readonly IActivityRepository activityRepository;
     private readonly UserManager<User> userManager;
     private readonly RegistrationsManager registrationsManager;
+    private readonly NotificationsManager notificationsManager;
     private readonly IChatRepository chatRepository;
 
     public ActivitiesController(IActivityRepository activityRepository, UserManager<User> userManager,
-        RegistrationsManager registrationsManager,
+        RegistrationsManager registrationsManager, NotificationsManager notificationsManager,
         IChatRepository chatRepository)
     {
         this.activityRepository = activityRepository;
         this.userManager = userManager;
         this.registrationsManager = registrationsManager;
+        this.notificationsManager = notificationsManager;
         this.chatRepository = chatRepository;
     }
     
@@ -69,6 +72,8 @@ public class ActivitiesController : ControllerBase
             Type = ChatType.Activity,
             Id = activity.ChatId
         });
+
+        await notificationsManager.SendAllInConference(Templates.NewActivity(activity.Name), conferenceId);
         
         return Created($"conferences/{conferenceId}/activities/{activity.Id}", activity);
     }
@@ -81,11 +86,16 @@ public class ActivitiesController : ControllerBase
         var activity = activityRepository.GetById(activityId);
         if (activity is null || activity.ConferenceId != conferenceId)
             return NotFound();
-        
+
+        var sendNotification = false;
         activity.Name = request.Name ?? activity.Name;
         activity.Description = request.Description ?? activity.Description;
         activity.TypeLabel = request.TypeLabl ?? activity.TypeLabel;
-        activity.StartsAt = request.StartTime ?? activity.StartsAt;
+        if (request.StartTime is not null)
+        {
+            activity.StartsAt = request.StartTime.Value;
+            sendNotification = true;
+        }
         activity.EndsAt = request.EndTime ?? activity.EndsAt;
         activity.Type = request.Type ?? activity.Type; // TODO whatever comes with changing the type
         activity.Recording = request.Recording ?? activity.Recording;
@@ -97,6 +107,8 @@ public class ActivitiesController : ControllerBase
         }
 
         await activityRepository.ChangeAsync(activity);
+        if (sendNotification) 
+            await notificationsManager.SendAllInConference(Templates.ActivityNewDate(activity.Name, activity.StartsAt), conferenceId);
         return NoContent();
     }
 
