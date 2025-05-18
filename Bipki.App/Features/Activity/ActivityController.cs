@@ -155,6 +155,7 @@ public class ActivitiesController : ControllerBase
         var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
 
         var topWaiterId = await registrationsManager.Unregister(activityId, userId);
+        await registrationsManager.ExitWaitList(activityId, userId);
         if (topWaiterId is not null)
             await notificationsManager.Send(Templates.VerifyRegistration(activity.Name, DateTime.Now + TimeSpan.FromMinutes(15)), topWaiterId.Value);
         

@@ -66,7 +66,7 @@ public class ZalupaService
         while (!cancellationToken.IsCancellationRequested)
         {
             var deleteEvent = await channel.Reader.ReadAsync(cancellationToken);
-            var luckyFuckerId = await registrationsManager.DeleteUnverifiedRegistration(deleteEvent.Id);
+            var topWaiterId = await registrationsManager.DeleteUnverifiedRegistration(deleteEvent.Id);
         }
     }
 
