@@ -6,6 +6,8 @@ import { getUser, logout } from "../../../api/authApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Role } from "types/User";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import { getConference } from 'api/conferenceApi';
+import { getActivity } from 'api/activityApi';
 
 const HeaderContainer = styled(Stack)({
   height: "56px",
@@ -42,7 +44,19 @@ export const Header = () => {
   const queryClient = useQueryClient();
   const { conferenceId, activityId } = useParams();
 
-  const chatId = activityId ?? conferenceId;
+  const { data: conference } = useQuery({
+    queryKey: ["conference", conferenceId],
+    queryFn: () => getConference(conferenceId!),
+    enabled: !!conferenceId,
+  });
+
+  const { data: activity } = useQuery({
+    queryKey: ["activity", activityId],
+    queryFn: () => getActivity(activityId!),
+    enabled: !!activityId,
+  });
+
+  const chatId = conference?.chatId ?? activity?.chatId;
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],

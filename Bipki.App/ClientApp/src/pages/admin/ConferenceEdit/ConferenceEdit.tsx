@@ -30,14 +30,14 @@ export const ConferenceEdit = () => {
   useEffect(() => {
     if (conference) {
       setForm({
-        name: conference.title || "",
+        name: conference.name || "",
         startDate: conference.startDate
           ? new Date(conference.startDate).toISOString().slice(0, 16)
           : "",
         endDate: conference.endDate
           ? new Date(conference.endDate).toISOString().slice(0, 16)
           : "",
-        location: conference.address || "",
+        location: conference.location || "",
         description: conference.description || "",
         plan: conference.plan || "",
       });

@@ -1,11 +1,6 @@
 import { Box, Typography, Button, styled } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { RegistrationStatus } from "../../../types/Conference";
-import { getConference } from "../../../api/conferenceApi";
-import { getUser } from "api/authApi";
-import { useParams } from "react-router-dom";
 import { Loader } from "components/common/Loader/Loader";
-import { Role, User } from "types/User";
+import { Role } from "types/User";
 import { useConference } from "hooks/useConference";
 
 const Time = styled(Typography)({
@@ -23,6 +18,8 @@ const Location = styled(Typography)({
 });
 
 const formatDate = (startDate: Date, endDate: Date) => {
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
   const day = startDate.getDate();
   const month = startDate
     .toLocaleString("ru-RU", { month: "long", day: "numeric" })
@@ -58,7 +55,7 @@ export const ConferenceHeader = () => {
           marginBottom: "8px",
         }}
       >
-        {conference.title}
+        {conference.name}
       </Typography>
       <Time
         sx={{
@@ -74,10 +71,9 @@ export const ConferenceHeader = () => {
           marginBottom: "16px",
         }}
       >
-        {conference.address}
+        {conference.location}
       </Location>
-      {user?.role === Role.Admin ? undefined : conference.registrationStatus ===
-        RegistrationStatus.NotRegistered ? (
+      {user?.role === Role.Admin ? undefined : !user ? (
         <Button variant="contained" fullWidth sx={{ color: "#FFFFFF" }}>
           Записаться на мероприятие
         </Button>

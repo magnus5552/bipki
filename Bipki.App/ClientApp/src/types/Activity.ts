@@ -20,6 +20,7 @@ export interface BaseActivity {
   typeLabel: string;
   registrationStatus: RegistrationStatus;
   waitingListCount: number;
+  chatId: string;
 }
 
 export interface WorkshopActivity extends BaseActivity {

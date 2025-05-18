@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { AuthLayout } from '../../../components/auth/AuthLayout/AuthLayout';
 import {
@@ -16,23 +16,15 @@ import { Box } from '@mui/material';
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { conferenceId } = useParams();
+
   const [formData, setFormData] = useState<RegisterCredentials>({
-    username: '',
+    name: '',
+    surname: '',
     telegram: '',
     password: '',
-    confirmPassword: '',
-    conferenceId: '',
+    conferenceId: conferenceId ?? '',
   });
-
-  useEffect(() => {
-    // Получаем conferenceId из query-параметров
-    const searchParams = new URLSearchParams(location.search);
-    const conferenceId = searchParams.get('conferenceId');
-    
-    if (conferenceId) {
-      setFormData(prev => ({ ...prev, conferenceId }));
-    }
-  }, [location]);
 
   const registerMutation = useMutation({
     mutationFn: register,
@@ -78,8 +70,16 @@ export const RegisterPage: React.FC = () => {
         <Box component="form" onSubmit={handleRegister} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <StyledTextField
             label="Имя"
-            name="username"
-            value={formData.username}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            variant="standard"
+            fullWidth
+          />
+          <StyledTextField
+            label="Фамилия"
+            name="surname"
+            value={formData.surname}
             onChange={handleChange}
             variant="standard"
             fullWidth
@@ -97,15 +97,6 @@ export const RegisterPage: React.FC = () => {
             name="password"
             type="password"
             value={formData.password}
-            onChange={handleChange}
-            variant="standard"
-            fullWidth
-          />
-          <StyledTextField
-            label="Повтор"
-            name="confirmPassword"
-            type="password"
-            value={formData.confirmPassword}
             onChange={handleChange}
             variant="standard"
             fullWidth

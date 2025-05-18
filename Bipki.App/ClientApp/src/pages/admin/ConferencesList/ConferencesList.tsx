@@ -100,7 +100,7 @@ export const ConferencesList = () => {
         <DialogTitle>Подтверждение удаления</DialogTitle>
         <DialogContent>
           <Typography>
-            Вы уверены, что хотите удалить конференцию "{conferenceToDelete?.title}"?
+            Вы уверены, что хотите удалить конференцию "{conferenceToDelete?.name}"?
           </Typography>
         </DialogContent>
         <DialogActions>

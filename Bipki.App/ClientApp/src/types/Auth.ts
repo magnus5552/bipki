@@ -9,9 +9,9 @@ export type AdminLoginCredentials = {
 };
 
 export type RegisterCredentials = {
-  username: string;
+  name: string;
+  surname: string;
   telegram: string;
   password: string;
-  confirmPassword: string;
   conferenceId?: string;
 };

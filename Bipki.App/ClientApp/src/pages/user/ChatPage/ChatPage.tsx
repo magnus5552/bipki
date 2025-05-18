@@ -129,6 +129,8 @@ export const ChatPage = () => {
   useEffect(() => {
     if (!signalR || !chatId) return;
 
+    signalR.send("EnterChat", { chatId });
+
     signalR.on("ReceiveMessage", (message: Message) => {
       if (message.chatId === chatId) {
         queryClient.setQueryData<typeof chat>(["chat", chatId], (old) => {
@@ -159,6 +161,7 @@ export const ChatPage = () => {
     });
 
     return () => {
+      signalR.send("ExitChat", { chatId });
       signalR.off("ReceiveMessage");
       signalR.off("PollUpdated");
     };

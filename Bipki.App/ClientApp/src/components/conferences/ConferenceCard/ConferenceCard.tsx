@@ -42,7 +42,7 @@ export const ConferenceCard = ({
     <CardContainer onClick={handleCardClick} sx={{ cursor: "pointer" }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
         <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: 600 }}>
-          {conference.title}
+          {conference.name}
         </Typography>
         <Button
           variant="text"
