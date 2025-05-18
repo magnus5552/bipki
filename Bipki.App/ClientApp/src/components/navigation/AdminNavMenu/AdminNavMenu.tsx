@@ -55,12 +55,12 @@ export const AdminNavMenu = () => {
         flexDirection: "column",
         minHeight: "100vh",
         alignItems: "center",
-        maxWidth: "311px",
+        width: "100vw",
         margin: "0 auto",
       }}
     >
       <ConferenceHeader />
-      <Box component="main" sx={{ flexGrow: 1, pb: 7 }}>
+      <Box component="main" sx={{ flexGrow: 1, pb: 7, width: "100vw" }}>
         <Outlet />
       </Box>
       <Paper

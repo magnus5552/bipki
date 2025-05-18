@@ -9,7 +9,7 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 const HeaderContainer = styled(Stack)({
   height: "56px",
-  maxWidth: "311px",
+  padding: "0 24px",
   margin: "0 auto",
   gap: "8px",
   position: "relative",
@@ -85,7 +85,15 @@ export const Header = () => {
         )}
       </Box>
       {user.isAuthenticated && chatId && (
-        <ChatButton onClick={() => navigate(`/chat/${chatId}`)}>
+        <ChatButton
+          onClick={() =>
+            navigate(
+              user.role === Role.Admin
+                ? `/admin/conferences/${conferenceId}/chat/${chatId}`
+                : `/chat/${chatId}`
+            )
+          }
+        >
           <SupportAgentIcon />
         </ChatButton>
       )}

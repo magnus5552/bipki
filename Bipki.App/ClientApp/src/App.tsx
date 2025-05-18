@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter } from "./router";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import "./custom.css";
+import { ChatProvider } from "contexts/ChatContext";
 
 interface AppProps {
   basename: string;
@@ -67,7 +68,9 @@ export default function App({ basename }: AppProps) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <ChatProvider>
+          <RouterProvider router={router} />
+        </ChatProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

@@ -14,6 +14,7 @@ import { ConferencesList } from "pages/admin/ConferencesList/ConferencesList";
 import { ActivitiesList } from "pages/admin/ActivitiesList/ActivitiesList";
 import { ActivityEdit } from "pages/admin/ActivityEdit/ActivityEdit";
 import { ConferenceEdit } from "pages/admin/ConferenceEdit/ConferenceEdit";
+import { ChatPage } from "pages/user/ChatPage/ChatPage";
 
 export const createRouter = (basename: string) =>
   createBrowserRouter(
@@ -62,6 +63,10 @@ export const createRouter = (basename: string) =>
                 path: "map",
                 element: <div>Admin Map</div>,
               },
+              {
+                path: "chat/:chatId",
+                element: <ChatPage />,
+              },
             ],
           },
         ],
@@ -91,6 +96,10 @@ export const createRouter = (basename: string) =>
               {
                 path: "/registered",
                 element: <RegisteredPage />,
+              },
+              {
+                path: "/chat/:chatId",
+                element: <ChatPage />,
               },
             ],
           },
