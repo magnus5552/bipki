@@ -1,8 +1,7 @@
 ﻿using Bipki.Database.Mappers;
 using Bipki.Database.Models;
-using Bipki.Database.Models.BusinessModels;
+using Microsoft.EntityFrameworkCore;
 using Activity = Bipki.Database.Models.Activity;
-using DbActivity = Bipki.Database.Models.BusinessModels.Activity;
 
 namespace Bipki.Database.Repositories;
 
@@ -14,7 +13,7 @@ public class ActivityRepository : IActivityRepository
     {
         this.dbContext = dbContext;
     }
-    
+
     public Activity? GetById(Guid id)
     {
         return ActivityMapper.Map(dbContext.Activities.FirstOrDefault(a => a.Id == id));
@@ -32,7 +31,7 @@ public class ActivityRepository : IActivityRepository
         var status = RegistrationStatus.NotRegistered;
         if (registration is not null)
         {
-            status = registration.Verified ? RegistrationStatus.Registered : RegistrationStatus.PendingConfirmation;   
+            status = registration.Verified ? RegistrationStatus.Registered : RegistrationStatus.PendingConfirmation;
         }
         else
         {
@@ -61,31 +60,44 @@ public class ActivityRepository : IActivityRepository
         };
     }
 
-    public Guid? Save(Activity activity)
+    public async Task SaveAsync(Activity activity)
     {
-        if (activity.StartsAt < activity.EndsAt || activity.TotalSeats < 0)
-            return null;
-        
-        var dbActivity = new DbActivity
+        var dbActivity = ActivityMapper.Map(activity);
+        if (dbActivity is null)
         {
-            Id = activity.Id ?? Guid.NewGuid(),
-            ConferenceId = activity.ConferenceId,
-            Name = activity.Name,
-            Description = activity.Description,
-            StartsAt = activity.StartsAt,
-            EndsAt = activity.EndsAt,
-            TotalParticipants = activity.TotalSeats
-        };
-
-        dbContext.Activities.Add(dbActivity);
-        try
-        {
-            dbContext.SaveChanges();
-        } catch
-        {
-            return null;
+            return;
         }
 
-        return dbActivity.Id;
+        await dbContext.Activities.AddAsync(dbActivity);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task ChangeAsync(Activity activity)
+    {
+        var dbActivity = ActivityMapper.Map(activity);
+
+        if (dbActivity is null)
+        {
+            return;
+        }
+        
+        var existingActivity = await dbContext.Activities.FindAsync(dbActivity.Id);
+        if (existingActivity != null)
+        {
+            dbContext.Entry(existingActivity).CurrentValues.SetValues(dbActivity);
+        }
+        else
+        {
+            dbContext.Activities.Update(dbActivity);
+        }
+    }
+    
+    public async Task<Activity?> GetByChatId(Guid chatId)
+    {
+        var activity = await dbContext.Activities
+            .Where(x => x.ChatId == chatId)
+            .FirstOrDefaultAsync();
+
+        return ActivityMapper.Map(activity);
     }
 }

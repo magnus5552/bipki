@@ -6,5 +6,9 @@ public interface IActivityRepository
 {
     Activity? GetById(Guid id);
     UserActivity? GetUserActivity(Guid userId, Guid activityId);
-    Guid? Save(Activity activity);
+    Task SaveAsync(Activity activity);
+
+    Task<Activity?> GetByChatId(Guid id);
+
+    Task ChangeAsync(Activity activity);
 }

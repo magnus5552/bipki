@@ -4,7 +4,7 @@ namespace Bipki.Database.Models;
 
 public class Activity
 {
-    public Guid? Id { get; set; }
+    public Guid Id { get; set; }
     
     public Guid ConferenceId { get; set; }
     

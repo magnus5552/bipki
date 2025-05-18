@@ -43,8 +43,11 @@ public class ActivitiesController : ControllerBase
     
     [HttpPost]
     [Authorize(Roles = Roles.Admin)]
-    public IActionResult CreateActivity([FromBody] CreateActivityRequest request, [FromRoute] Guid conferenceId)
+    public async Task<IActionResult> CreateActivity([FromBody] CreateActivityRequest request, [FromRoute] Guid conferenceId)
     {
+        if (request.StartTime < request.EndTime || request.TotalSeats < 0)
+            return BadRequest();
+        
         var activity = new Database.Models.Activity
         {
             Name = request.Name,
@@ -54,20 +57,17 @@ public class ActivitiesController : ControllerBase
             EndsAt = request.EndTime,
             Type = request.Type,
             TotalSeats = request.TotalSeats,
-            Recording = null
+            Id = Guid.NewGuid()
         };
 
-        var id = activityRepository.Save(activity);
-        if (id is null)
-            return BadRequest();
+        await activityRepository.SaveAsync(activity);
         
-        activity.Id = id.Value;
-        return Ok(activity);
+        return Created($"activities/{activity.Id}", activity);
     }
 
     [HttpPatch("{activityId:guid}")]
     [Authorize(Roles = Roles.Admin)]
-    public IActionResult UpdateActivity([FromBody] UpdateActivityRequest request, [FromRoute] Guid activityId,
+    public async Task<IActionResult> UpdateActivity([FromBody] UpdateActivityRequest request, [FromRoute] Guid activityId,
         [FromRoute] Guid conferenceId)
     {
         var activity = activityRepository.GetById(activityId);
@@ -89,9 +89,7 @@ public class ActivitiesController : ControllerBase
         if (request.TotalSeats is not null)
             activity.TotalSeats = request.TotalSeats.Value; // TODO manslaughter
 
-        var id = activityRepository.Save(activity);
-        if (id is null)
-            return BadRequest();
+        var id = activityRepository.ChangeAsync(activity);
         return NoContent();
     }
 

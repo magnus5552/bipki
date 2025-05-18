@@ -13,12 +13,19 @@ public class ChatHub : Hub<IChatClient>
     private readonly IChatRepository chatRepository;
     private readonly UserManager<User> userManager;
     private readonly IMessageRepository messageRepository;
+    private readonly IActivityRepository activityRepository;
+    private readonly IActivityRegistrationRepository activityRegistrationRepository;
 
-    public ChatHub(IChatRepository chatRepository, UserManager<User> userManager, IMessageRepository messageRepository)
+    public ChatHub(IChatRepository chatRepository, UserManager<User> userManager,
+        IMessageRepository messageRepository,
+        IActivityRepository activityRepository,
+        IActivityRegistrationRepository activityRegistrationRepository)
     {
         this.chatRepository = chatRepository;
         this.userManager = userManager;
         this.messageRepository = messageRepository;
+        this.activityRepository = activityRepository;
+        this.activityRegistrationRepository = activityRegistrationRepository;
     }
 
     public async Task SendMessage(Guid chatId, string message)
@@ -41,6 +48,11 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
+        if (!await IsChatAllowedForUser(chat, user))
+        {
+            return;
+        }
+
         var messageModel = new Message
         {
             Timestamp = DateTime.UtcNow,
@@ -56,8 +68,23 @@ public class ChatHub : Hub<IChatClient>
     }
 
     // TODO
-    private Task<bool> IsChatAllowedForUser(Guid chatId, User user)
+    private async Task<bool> IsChatAllowedForUser(Chat chat, User user)
     {
-        throw new NotImplementedException();
+        if (await userManager.IsInRoleAsync(user, Roles.Admin) ||
+            chat.Type == ChatType.Conference)
+        {
+            return true;
+        }
+
+        var activity = await activityRepository.GetByChatId(chat.Id);
+        if (activity is null)
+        {
+            return false;
+        }
+
+        var activityRegistration =
+            await activityRegistrationRepository.GetVerifiedByActivityAndUserId(activity.Id, user.Id);
+
+        return activityRegistration is not null;
     }
 }
