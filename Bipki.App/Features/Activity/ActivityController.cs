@@ -46,10 +46,10 @@ public class ActivitiesController : ControllerBase
     [Authorize]
     public IActionResult GetAllForUser([FromRoute] Guid conferenceId)
     {
-        var userId = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
+        var userId1 = Guid.Parse(userManager.GetUserId(User)!); // nullable suppression can never go wrong
 
         return Ok(activityRepository.GetAllInConference(conferenceId)
-            .Select(a => activityRepository.GetUserActivity(userId, a.Id)).ToArray());
+            .Select(a => activityRepository.GetUserActivity(userId1, a.Id)).ToArray());
     }
 
     [HttpGet("{activityId:guid}/extended")]
