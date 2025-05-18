@@ -119,7 +119,7 @@ public class ConferencesController : ControllerBase
         var hostName = HttpContext.Request.Host.Value;
         var qrCodeData =
             QRCodeGenerator.GenerateQrCode(
-                new PayloadGenerator.Url($"http://{hostName}/admin/userStatus"));
+                new PayloadGenerator.Url($"http://{hostName}/admin/userStatus?userId={userId}"));
 
         return Ok(new PngByteQRCode(qrCodeData).GetGraphic(10));
     }
