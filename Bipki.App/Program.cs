@@ -3,6 +3,7 @@ using Bipki.App.Features.Activity;
 using Bipki.App.Features.Auth;
 using Bipki.App.Features.Chats;
 using Bipki.App.Features.Chats.Hubs;
+using Bipki.App.Features.Notifications;
 using Bipki.App.Options;
 using Bipki.Database;
 
@@ -29,6 +30,7 @@ builder.Services.AddDatabaseServices(appOptions!.DatabaseOptions.DbConnectionStr
 builder.Services.AddIdentityServices();
 builder.Services.AddChats();
 builder.Services.AddActivitiesServices();
+builder.Services.AddWebPushServices();
 
 var app = builder.Build();
 
