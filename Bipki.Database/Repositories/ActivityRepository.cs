@@ -49,7 +49,7 @@ public class ActivityRepository : IActivityRepository
             StartDateTime = activity.StartsAt,
             EndDateTime = activity.EndsAt,
             NotificationEnabled = registration?.NotificationEnabled ?? false,
-            CommunicationChannel = "stub",
+            CommunicationChannel = "stub", // TODO chat integration
             Type = activity.Type,
             RegistrationStatus = status,
             ConfirmationDeadline = status == RegistrationStatus.PendingConfirmation

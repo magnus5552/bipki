@@ -81,12 +81,10 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.Id).HasColumnName("id");
 
             entity.Property(e => e.Name)
-                .HasColumnType("character varying")
                 .HasMaxLength(50)
                 .HasColumnName("name");
 
             entity.Property(e => e.Description)
-                .HasColumnType("character varying")
                 .HasColumnName("description");
 
             entity.Property(e => e.Plan).HasColumnName("floor_plan"); // TODO probably needs change
@@ -118,6 +116,10 @@ public class BipkiContext : IdentityDbContext<User, Role, Guid>
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
+            
+            entity.Property(e => e.TypeLabel)
+                .HasMaxLength(50)
+                .HasColumnName("type_label");
 
             entity.Property(e => e.Description)
                 .HasColumnName("description");

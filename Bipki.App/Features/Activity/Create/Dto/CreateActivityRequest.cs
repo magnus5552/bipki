@@ -6,6 +6,8 @@ public class CreateActivityRequest
 {
     public string Name { get; set; } = null!;
 
+    public string TypeLabel { get; set; } = null!;
+
     public string Description { get; set; } = null!;
 
     public DateTime StartTime { get; set; }

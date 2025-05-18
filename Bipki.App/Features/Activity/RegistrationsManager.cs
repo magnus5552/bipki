@@ -125,6 +125,20 @@ public class RegistrationsManager
 
         return true;
     }
+    
+    public async Task Shrink(Guid activityId)
+    {
+        var activity = dbContext.Activities.FirstOrDefault(a => a.Id == activityId);
+        if (activity is null)
+            return;
+
+        var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        var registrations = SelectForUpdateOnActivity(activityId).OrderBy(r => r.RegisteredAt);
+        dbContext.ActivityRegistrations.RemoveRange(registrations.Skip(activity.TotalParticipants));
+
+        await transaction.CommitAsync();
+    }
 
     private IQueryable<ActivityRegistration> SelectForUpdateOnActivity(Guid activityId) => 
         dbContext.Database.SqlQueryRaw<ActivityRegistration>("SELECT * FROM activity_registrations WHERE id == {activityId} FOR UPDATE", activityId);
