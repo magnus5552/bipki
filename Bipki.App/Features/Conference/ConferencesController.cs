@@ -96,13 +96,14 @@ public class ConferencesController : ControllerBase
             ChatId = Guid.NewGuid()
         };
         
-        await conferenceRepository.AddConference(conference);
         await chatRepository.Add(new Chat
         {
             Title = conference.Name,
             Type = ChatType.Conference,
             Id = conference.ChatId
         });
+        await conferenceRepository.AddConference(conference);
+
         
         
         return Created($"conferences/{conference.Id}", conference.Id);

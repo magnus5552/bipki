@@ -62,7 +62,6 @@ public class AuthController : ControllerBase
         }
 
         await userManager.AddToRoleAsync(user, Roles.User);
-        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         return Ok();
@@ -82,7 +81,6 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid credentials");
         }
 
-        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         var model = new UserModel
@@ -112,7 +110,6 @@ public class AuthController : ControllerBase
             return BadRequest("Something went wrong");
         }
 
-        await userManager.UpdateSecurityStampAsync(user);
         await signInManager.SignInAsync(user, true);
 
         var model = new UserModel
