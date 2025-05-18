@@ -11,4 +11,5 @@ export interface Conference {
   address: string;
   description: string;
   registrationStatus: RegistrationStatus;
+  participantsCount: number;
 }

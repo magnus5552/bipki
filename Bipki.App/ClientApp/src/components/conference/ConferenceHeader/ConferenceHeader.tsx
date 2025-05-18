@@ -2,6 +2,11 @@ import { Box, Typography, Button, styled } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { RegistrationStatus } from "../../../types/Conference";
 import { getConference } from "../../../api/conferenceApi";
+import { getUser } from "api/authApi";
+import { useParams } from "react-router-dom";
+import { Loader } from "components/common/Loader/Loader";
+import { Role, User } from "types/User";
+import { useConference } from "hooks/useConference";
 
 const Time = styled(Typography)({
   fontSize: "12px",
@@ -19,19 +24,28 @@ const Location = styled(Typography)({
 
 const formatDate = (startDate: Date, endDate: Date) => {
   const day = startDate.getDate();
-  const month = startDate.toLocaleString('ru-RU', { month: 'long', day: 'numeric' }).split(' ')[1];
-  const startTime = startDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  const endTime = endDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  const month = startDate
+    .toLocaleString("ru-RU", { month: "long", day: "numeric" })
+    .split(" ")[1];
+  const startTime = startDate.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const endTime = endDate.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   return `${day} ${month}, ${startTime} - ${endTime}`;
 };
 
 export const ConferenceHeader = () => {
-  const { data: conference, isLoading } = useQuery({
-    queryKey: ["conference"],
-    queryFn: getConference,
-  });
+  const { user, conference, isLoading } = useConference();
 
-  if (isLoading || !conference) {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!conference) {
     return null;
   }
 
@@ -62,12 +76,9 @@ export const ConferenceHeader = () => {
       >
         {conference.address}
       </Location>
-      {conference.registrationStatus === RegistrationStatus.NotRegistered ? (
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ color: '#FFFFFF' }}
-        >
+      {user?.role === Role.Admin ? undefined : conference.registrationStatus ===
+        RegistrationStatus.NotRegistered ? (
+        <Button variant="contained" fullWidth sx={{ color: "#FFFFFF" }}>
           Записаться на мероприятие
         </Button>
       ) : (
@@ -81,4 +92,5 @@ export const ConferenceHeader = () => {
       )}
     </Box>
   );
-}; 
+};
+

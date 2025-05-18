@@ -12,7 +12,8 @@ const activities: Activity[] = [
     registrationStatus: RegistrationStatus.Registered,
     totalSeats: 25,
     occupiedSeats: 25,
-    typeLabel: "Мастер-класс"
+    typeLabel: "Мастер-класс",
+    waitingListCount: 0
   },
   {
     id: "2",
@@ -24,7 +25,8 @@ const activities: Activity[] = [
     registrationStatus: RegistrationStatus.WaitingList,
     totalSeats: 15,
     occupiedSeats: 15,
-    typeLabel: "Мастер-класс"
+    typeLabel: "Мастер-класс",
+    waitingListCount: 0
   },
   {
     id: "3",
@@ -37,7 +39,8 @@ const activities: Activity[] = [
     totalSeats: 20,
     occupiedSeats: 18,
     confirmationDeadline: new Date("2024-05-21T18:15:00"),
-    typeLabel: "Мастер-класс"
+    typeLabel: "Мастер-класс",
+    waitingListCount: 0
   },
   {
     id: "4",
@@ -47,7 +50,8 @@ const activities: Activity[] = [
     description: "Увлекательная лекция о физиологии и эволюции лошадей.",
     type: ActivityType.Lecture,
     typeLabel: "Лекция",
-    registrationStatus: RegistrationStatus.NotRegistered
+    registrationStatus: RegistrationStatus.NotRegistered,
+    waitingListCount: 0
   },
   {
     id: "5",
@@ -59,7 +63,8 @@ const activities: Activity[] = [
     registrationStatus: RegistrationStatus.NotRegistered,
     totalSeats: 12,
     occupiedSeats: 8,
-    typeLabel: "Мастер-класс"
+    typeLabel: "Мастер-класс",
+    waitingListCount: 0
   },
   {
     id: "6",
@@ -69,7 +74,8 @@ const activities: Activity[] = [
     description: "Лекция о развитии ИИ от первых нейронных сетей до современных языковых моделей.",
     type: ActivityType.Lecture,
     typeLabel: "Лекция",
-    registrationStatus: RegistrationStatus.Registered
+    registrationStatus: RegistrationStatus.Registered,
+    waitingListCount: 0
   },
   {
     id: "7",
@@ -82,7 +88,8 @@ const activities: Activity[] = [
     totalSeats: 15,
     occupiedSeats: 12,
     confirmationDeadline: new Date("2024-05-23T18:00:00"),
-    typeLabel: "Мастер-класс"
+    typeLabel: "Мастер-класс",
+    waitingListCount: 0
   }
 ];
 
@@ -96,3 +103,37 @@ export async function getActivity(activityId: string): Promise<Activity> {
 export async function getActivities(): Promise<Activity[]> {
   return activities;
 }
+
+export const getConferenceActivities = async (conferenceId: string): Promise<Activity[]> => {
+  //const response = await axios.get<Activity[]>(`/admin/conferences/${conferenceId}/activities`);
+  //return response.data;
+  return activities;
+};
+
+export interface PatchActivityRequest {
+  title?: string;
+  startDateTime?: Date;
+  endDateTime?: Date;
+  description?: string;
+  type?: ActivityType;
+  typeLabel?: string;
+  totalSeats?: number;
+}
+
+export const updateActivity = async (conferenceId: string, activityId: string, data: PatchActivityRequest): Promise<void> => {
+  await axios.patch(`/admin/conferences/${conferenceId}/activities/${activityId}`, data);
+};
+
+export interface CreateActivityRequest {
+  title: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  description: string;
+  type: ActivityType;
+  typeLabel: string;
+  totalSeats?: number;
+}
+
+export const createActivity = async (conferenceId: string, data: CreateActivityRequest): Promise<void> => {
+  await axios.put(`/admin/conferences/${conferenceId}/activities`, data);
+};

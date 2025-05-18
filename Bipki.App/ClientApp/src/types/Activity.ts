@@ -19,6 +19,7 @@ export interface BaseActivity {
   type: ActivityType;
   typeLabel: string;
   registrationStatus: RegistrationStatus;
+  waitingListCount: number;
 }
 
 export interface WorkshopActivity extends BaseActivity {

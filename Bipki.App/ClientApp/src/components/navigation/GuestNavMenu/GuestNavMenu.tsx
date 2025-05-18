@@ -5,7 +5,6 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
-import Favorite from "@mui/icons-material/Favorite";
 import Info from "@mui/icons-material/Info";
 import Assignment from "@mui/icons-material/Assignment";
 import Star from "@mui/icons-material/Star";

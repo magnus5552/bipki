@@ -1,17 +1,18 @@
-import { Box, Typography, IconButton, styled } from "@mui/material";
+import { Box, Typography, IconButton, styled, Stack } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import HomeIcon from "@mui/icons-material/Home";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUser, logout } from "../../../api/authApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Role } from "types/User";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
-const HeaderContainer = styled(Box)({
+const HeaderContainer = styled(Stack)({
   height: "56px",
   maxWidth: "311px",
   margin: "0 auto",
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
   gap: "8px",
+  position: "relative",
 });
 
 const UserName = styled(Typography)({
@@ -22,7 +23,7 @@ const UserName = styled(Typography)({
   textAlign: "right",
 });
 
-const LogoutButton = styled(IconButton)({
+const IconButtonStyled = styled(IconButton)({
   color: "#A980E0",
   padding: 0,
   "&:hover": {
@@ -30,11 +31,20 @@ const LogoutButton = styled(IconButton)({
   },
 });
 
+const ChatButton = styled(IconButtonStyled)({
+  position: "absolute",
+  left: "50%",
+  transform: "translateX(-50%)",
+});
+
 export const Header = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
-  const { data: user } = useQuery({
+  const { conferenceId, activityId } = useParams();
+
+  const chatId = activityId ?? conferenceId;
+
+  const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: getUser,
   });
@@ -51,16 +61,48 @@ export const Header = () => {
     logoutMutation.mutate();
   };
 
-  if (!user?.isAuthenticated) {
+  const handleHome = () => {
+    navigate("/admin/conferences");
+  };
+
+  if (isLoading || !user?.isAuthenticated) {
     return <HeaderContainer />;
   }
 
   return (
-    <HeaderContainer>
-      <UserName>{user.username}</UserName>
-      <LogoutButton onClick={handleLogout}>
-        <LogoutIcon />
-      </LogoutButton>
+    <HeaderContainer
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+    >
+      <Box
+        sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: "80px" }}
+      >
+        {user.role === Role.Admin && (
+          <IconButtonStyled onClick={handleHome}>
+            <HomeIcon />
+          </IconButtonStyled>
+        )}
+      </Box>
+      {user.isAuthenticated && chatId && (
+        <ChatButton onClick={() => navigate(`/chat/${chatId}`)}>
+          <SupportAgentIcon />
+        </ChatButton>
+      )}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          minWidth: "80px",
+          justifyContent: "flex-end",
+        }}
+      >
+        <UserName>{user.username}</UserName>
+        <IconButtonStyled onClick={handleLogout}>
+          <LogoutIcon />
+        </IconButtonStyled>
+      </Box>
     </HeaderContainer>
   );
-}; 
+};

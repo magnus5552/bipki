@@ -8,7 +8,9 @@ export async function getUser(): Promise<User> {
     id: "1",
     username: "John Doe",
     telegram: "john_doe",
-    role: Role.User,
+    role: Role.Admin,
+    conferenceId: "1",
+    checkedIn: false,
     isAuthenticated: true,
   };
   //const { data } = await axios.get<User>('/api/user');

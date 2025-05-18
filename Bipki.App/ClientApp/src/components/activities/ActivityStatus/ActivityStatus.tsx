@@ -1,12 +1,16 @@
 import { Box, Stack } from "@mui/material";
 import { Activity, ActivityType, RegistrationStatus } from "../../../types/Activity";
 import { StatusChip } from "../ActivityCard/ActivityCard";
+import { useUser } from 'hooks/useUser';
+import { Role } from 'types/User';
 
 interface ActivityStatusProps {
   activity: Activity;
 }
 
 export const ActivityStatus = ({ activity }: ActivityStatusProps) => {
+  const { user } = useUser();
+
   const getStatusLabel = () => {
     if (activity.type === ActivityType.Workshop) {
       switch (activity.registrationStatus) {
@@ -50,7 +54,8 @@ export const ActivityStatus = ({ activity }: ActivityStatusProps) => {
           size="small"
           label={activity.typeLabel}
         />
-        {activity.type === ActivityType.Workshop &&
+        {user?.role !== Role.Admin &&
+        activity.type === ActivityType.Workshop &&
           activity.registrationStatus !== RegistrationStatus.PendingConfirmation &&
           status.text && (
             <StatusChip

@@ -8,7 +8,12 @@ import { LoginPage } from "./pages/user/LoginPage/LoginPage";
 import { RegisterPage } from "./pages/user/RegisterPage/RegisterPage";
 import { AdminLoginPage } from "./pages/user/AdminLoginPage/AdminLoginPage";
 import { Navigate } from "react-router-dom";
-import { RegisteredPage } from 'pages/user/RegisteredPage/RegisteredPage';
+import { RegisteredPage } from "pages/user/RegisteredPage/RegisteredPage";
+import { AdminNavMenu } from "components/navigation/AdminNavMenu/AdminNavMenu";
+import { ConferencesList } from "pages/admin/ConferencesList/ConferencesList";
+import { ActivitiesList } from "pages/admin/ActivitiesList/ActivitiesList";
+import { ActivityEdit } from "pages/admin/ActivityEdit/ActivityEdit";
+import { ConferenceEdit } from "pages/admin/ConferenceEdit/ConferenceEdit";
 
 export const createRouter = (basename: string) =>
   createBrowserRouter(
@@ -30,16 +35,34 @@ export const createRouter = (basename: string) =>
         element: <ProtectedRoute requiredRole={Role.Admin} />,
         children: [
           {
-            index: true,
-            element: <div>Admin Dashboard</div>,
+            path: "conferences",
+            element: <ConferencesList />,
           },
           {
-            path: "users",
-            element: <div>User Management</div>,
+            path: "conferences/:conferenceId/edit",
+            element: <ConferenceEdit />,
           },
           {
-            path: "settings",
-            element: <div>Admin Settings</div>,
+            path: "conferences/:conferenceId/activities/:activityId/edit",
+            element: <ActivityEdit />,
+          },
+          {
+            element: <AdminNavMenu />,
+            path: "conferences/:conferenceId",
+            children: [
+              {
+                path: "activities",
+                element: <ActivitiesList />,
+              },
+              {
+                index: true,
+                element: <ActivityPage />,
+              },
+              {
+                path: "map",
+                element: <div>Admin Map</div>,
+              },
+            ],
           },
         ],
       },
@@ -75,8 +98,8 @@ export const createRouter = (basename: string) =>
       },
       {
         path: "*",
-        element: <Navigate to="/activity" />
-      }
+        element: <Navigate to="/activity" />,
+      },
     ],
     { basename }
   );

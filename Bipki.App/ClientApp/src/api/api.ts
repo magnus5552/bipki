@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const BACKEND_URL = '';
+export const BACKEND_URL = '/api';
 const REQUEST_TIMEOUT = 5000;
 
 
